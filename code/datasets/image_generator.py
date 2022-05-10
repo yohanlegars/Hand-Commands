@@ -135,8 +135,7 @@ if __name__ == '__main__':
     SAVE_PATH = paths.DATA_PATH
     LABELS = ['stop', 'backward', 'forward', 'left', 'right']
     NUMBER_IMGS = 5
+    MODE = "manual"     # can either be 'manual' or 'timed'
 
-    data = DataGenerator(SAVE_PATH)
-    data.manual_data_generation(number_images=NUMBER_IMGS)
-    # data.timed_data_generation(number_images=NUMBER_IMGS)
-
+    data_generator = DataGenerator(SAVE_PATH)
+    eval("data_generator.{}_data_generation(number_images=NUMBER_IMGS)".format(MODE))
