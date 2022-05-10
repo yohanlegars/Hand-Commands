@@ -1,7 +1,11 @@
+import sys
 import cv2
 import os
 import time
 import uuid
+CONFIG_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, "config"))
+print(CONFIG_PATH)
+sys.path.append(CONFIG_PATH)
 from paths import DATA_PATH
 
 IMAGES_PATH = DATA_PATH
