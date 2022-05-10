@@ -12,15 +12,21 @@ import paths
 class DataGenerator(object):
     def __init__(self, IMAGES_PATH):
         """
-        This function is initialsigin the classifier
+        The constructor of the Data Generator.
 
-        :param IMAGES_PATH: the path variable, str
+        :param IMAGES_PATH: the path where the images should be saved, str
         """
         self.image_path = IMAGES_PATH
         self.labels = LABELS
         self.capture = cv2.VideoCapture(0)
 
     def timed_data_generation(self, number_images):
+        """
+        This method takes snapshots of the webcam on a regular timer.
+
+        :param number_images: number of instances to generate per label.
+        :return: None
+        """
         window_name = "Python Webcam: Manual Snapshots"
         font = cv2.FONT_HERSHEY_SIMPLEX
         cv2.namedWindow(window_name)
@@ -77,6 +83,12 @@ class DataGenerator(object):
         cv2.destroyAllWindows()
 
     def manual_data_generation(self, number_images):
+        """
+        This method takes snapshots of the webcam when the spacebar is pressed.
+
+        :param number_images: number of instances to generate per label.
+        :return: None
+        """
         window_name = "Python Webcam: Manual Snapshots"
         cv2.namedWindow(window_name)
         img_counter = 0
