@@ -6,14 +6,14 @@ import uuid
 CONFIG_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, "config"))
 print(CONFIG_PATH)
 sys.path.append(CONFIG_PATH)
-from paths import DATA_PATH
+import paths
 
-IMAGES_PATH = DATA_PATH
+IMAGES_PATH = paths.DATA_PATH
 LABELS = ['stop', 'backward', 'forward', 'left', 'right']
-NUMBER_IMGS = 3
+NUMBER_IMGS = 5
 
 class DataGenerator(object):
-    def __init__(self,IMAGES_PATH):
+    def __init__(self, IMAGES_PATH):
         """
         This function is initialsigin the classifier
 
@@ -21,18 +21,18 @@ class DataGenerator(object):
         """
         self.image_path = IMAGES_PATH
         self.labels = LABELS
-        self.number_imgs = NUMBER_IMGS
+        self.cap = cv2.VideoCapture(2)
 
-    def data_generation(self):
-
+    def data_generation(self, number_images):
         for label in self.labels:
-            os.mkdir(os.path.join(self.image_path, label))
-            cap = cv2.VideoCapture(0)
-            print('Collecting images for {}'.format(label))
+            label_path = os.path.join(self.image_path, label)
+            if not os.path.isdir(label_path):
+                os.mkdir(os.path.join(self.image_path, label))
+            print(f'Collecting images for {label} (starting in 5 sec)')
             time.sleep(5)
-            for imgnum in range(self.number_imgs):
-                ret, frame = cap.read()
-                imagename = os.path.join(self.image_path, label, label+'.'+'{}.jpg'.format(str(uuid.uuid1())))
+            for imgnum in range(number_images):
+                ret, frame = self.cap.read()
+                imagename = os.path.join(label_path, label+'.'+'{}.jpg'.format(str(uuid.uuid1())))
                 cv2.imwrite(imagename, frame)
                 cv2.imshow('frame', frame)
                 time.sleep(2)
@@ -40,12 +40,12 @@ class DataGenerator(object):
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
             
-            cap.release()
+            self.cap.release()
 
 if __name__ == '__main__':
 
     data = DataGenerator(IMAGES_PATH)
-    data.data_generation()
+    data.data_generation(number_images=5)
 
 
             
