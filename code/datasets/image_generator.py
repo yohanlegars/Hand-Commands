@@ -1,16 +1,13 @@
-import sys
 import cv2
 import os
 import time
 import uuid
-CONFIG_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, "config"))
-print(CONFIG_PATH)
-sys.path.append(CONFIG_PATH)
+# import sys
+# CONFIG_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, "config"))
+# print(CONFIG_PATH)
+# sys.path.append(CONFIG_PATH)
 import paths
 
-IMAGES_PATH = paths.DATA_PATH
-LABELS = ['stop', 'backward', 'forward', 'left', 'right']
-NUMBER_IMGS = 5
 
 class DataGenerator(object):
     def __init__(self, IMAGES_PATH):
@@ -21,35 +18,113 @@ class DataGenerator(object):
         """
         self.image_path = IMAGES_PATH
         self.labels = LABELS
-        self.cap = cv2.VideoCapture(2)
+        self.capture = cv2.VideoCapture(0)
 
-    def data_generation(self, number_images):
+    def timed_data_generation(self, number_images):
+        window_name = "Python Webcam: Manual Snapshots"
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        cv2.namedWindow(window_name)
+
+        # Little wait period at the start, to not be surprised
+        current_time = time.time()
+        print("Ok, prepare for quick snapshots now:\n"
+              "First label is: {}".format(self.labels[0]))
+        while time.time() < current_time + 3:
+            ret, frame = self.capture.read()
+
+            if not ret:
+                print("Failed to capture frame")
+                break
+
+            cv2.imshow(window_name, frame)
+            k = cv2.waitKey(125)
+
+            if k == 27 or k == ord('q'):  # Escape Key or 'Q' Key is pressed
+                print("Escape Key/'Q' Pressed: closing now")
+                self.capture.release()
+                cv2.destroyAllWindows()
+                return
+
         for label in self.labels:
-            label_path = os.path.join(self.image_path, label)
-            if not os.path.isdir(label_path):
-                os.mkdir(os.path.join(self.image_path, label))
-            print(f'Collecting images for {label} (starting in 5 sec)')
-            time.sleep(5)
-            for imgnum in range(number_images):
-                ret, frame = self.cap.read()
-                imagename = os.path.join(label_path, label+'.'+'{}.jpg'.format(str(uuid.uuid1())))
-                cv2.imwrite(imagename, frame)
-                cv2.imshow('frame', frame)
-                time.sleep(2)
+            print("Now Collecting images for label {}".format(label))
+            for img_count in range(number_images):
+                img_name = '{}_{}.jpg'.format(label, str(uuid.uuid1()))
+                current_time = time.time()
+                while time.time() < current_time + 3:
+                    ret, frame = self.capture.read()
 
-                if cv2.waitKey(1) & 0xFF == ord('q'):
-                    break
-            
-            self.cap.release()
+                    if not ret:
+                        print("Failed to capture frame")
+                        break
+
+                    cv2.putText(frame, str(round(3 - (time.time()-current_time), 2)), (100, 100), font, 4, (255, 0, 0))
+                    cv2.imshow(window_name, frame)
+                    k = cv2.waitKey(125)
+
+                    if k == 27 or k == ord('q'):    # Escape Key or 'Q' Key is pressed
+                        print("Escape Key/'Q' Pressed: closing now")
+                        self.capture.release()
+                        cv2.destroyAllWindows()
+                        return
+
+                else:
+                    ret, frame = self.capture.read()
+
+                    cv2.imshow(window_name, frame)
+                    cv2.imwrite(os.path.join(self.image_path, img_name), frame)
+                    cv2.waitKey(500)
+        self.capture.release()
+        cv2.destroyAllWindows()
+
+    def manual_data_generation(self, number_images):
+        window_name = "Python Webcam: Manual Snapshots"
+        cv2.namedWindow(window_name)
+        img_counter = 0
+        label_counter = 0
+        finished = False
+
+        print("Beginning Manual Snapshots:\n"
+              "Press the Space Bar to take a snapshot\n\n"
+              "Take a snapshot for label {}".format(self.labels[label_counter]))
+        while not finished:
+            ret, frame = self.capture.read()
+
+            if not ret:
+                print("Failed to capture frame")
+                finished = True
+
+            cv2.imshow(window_name, frame)
+            k = cv2.waitKey(1)
+
+            if k == 27 or k == ord('q'):    # Escape Key or 'Q' Key is pressed
+                print("Escape Key/'Q' Pressed: closing now")
+                finished = True
+
+            elif k == 32:                   # Spacebar Key is pressed
+                img_name = '{}_{}.jpg'.format(self.labels[label_counter], str(uuid.uuid1()))
+                cv2.imwrite(os.path.join(self.image_path, img_name), frame)
+                print('Picture number {} taken for label {}'.format(str(img_counter+1), self.labels[label_counter]))
+                img_counter += 1
+
+                if img_counter == number_images:
+                    if label_counter == len(self.labels)-1:
+                        finished = True
+                    else:
+                        img_counter = 0
+                        label_counter += 1
+                        print("Moving to next Label,\n"
+                              "Now Take a Screenshot for label {}".format(self.labels[label_counter]))
+        self.capture.release()
+        cv2.destroyAllWindows()
+
 
 if __name__ == '__main__':
 
-    data = DataGenerator(IMAGES_PATH)
-    data.data_generation(number_images=5)
+    SAVE_PATH = paths.DATA_PATH
+    LABELS = ['stop', 'backward', 'forward', 'left', 'right']
+    NUMBER_IMGS = 5
 
-
-            
-            
-
-
+    data = DataGenerator(SAVE_PATH)
+    data.manual_data_generation(number_images=NUMBER_IMGS)
+    # data.timed_data_generation(number_images=NUMBER_IMGS)
 
