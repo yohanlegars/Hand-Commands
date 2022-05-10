@@ -2,10 +2,9 @@ import cv2
 import os
 import time
 import uuid
+from paths import DATA_PATH
 
-
-IMAGES_PATH = os.path.dirname(__file__) 
-os.path.join
+IMAGES_PATH = DATA_PATH
 LABELS = ['stop', 'backward', 'forward', 'left', 'right']
 NUMBER_IMGS = 3
 
