@@ -32,7 +32,7 @@ The default classes are those from our personal project `['stop', 'backward', 'f
 
 We performed the manual annotations using `labelImg` package. The package can be installed with `pip3 install labelImg`.  By taking createML in the left column of the application,
 the generated annotation file will be saved as `.json`. The file contains the label name as well as the bounding box coordinates surrounding the hand. The files must be saved in 'data/not_yet_annotated' dir.
-Once done. you can move the image files with their corresponding json files to `data/annotated/ dir` by running the following command:
+Once done. you can move the image files with their corresponding json files to `data/annotated/` dir by running the following command:
 ````
 data_mover.py
 ````
