@@ -2,15 +2,15 @@ import cv2
 import os
 import time
 import uuid
-# import sys
-# CONFIG_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, "config"))
-# print(CONFIG_PATH)
-# sys.path.append(CONFIG_PATH)
+import argparse
+import sys
+CONFIG_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, "config"))
+sys.path.append(CONFIG_PATH)
 import paths
 
 
 class ImageGenerator(object):
-    def __init__(self, IMAGES_PATH, capture_arg=0):
+    def __init__(self, IMAGES_PATH, LABELS, capture_arg=0):
         """
         The constructor of the Data Generator.
 
@@ -136,10 +136,17 @@ class ImageGenerator(object):
 
 if __name__ == '__main__':
 
-    SAVE_PATH = os.path.join(paths.DATA_PATH, "not_yet_annotated")
-    LABELS = ['stop', 'backward', 'forward', 'left', 'right']
-    NUMBER_IMGS = 2
-    MODE = "timed"     # can either be 'manual' or 'timed'
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--LABELS', type=list, default=['stop', 'backward', 'forward', 'left', 'right'], help='list of classes')
+    parser.add_argument('--NUMBER_IMGS', type=int, default=2, help='number of pictures per classes')
+    parser.add_argument('--MODE', type=str, default="timed", help='timed or manual')
 
-    data_generator = ImageGenerator(SAVE_PATH)
-    eval("data_generator.{}_data_generation(number_images=NUMBER_IMGS)".format(MODE))
+    opt = parser.parse_args()
+
+    SAVE_PATH = os.path.join(paths.DATA_PATH, "not_yet_annotated")
+    # LABELS = ['stop', 'backward', 'forward', 'left', 'right']
+    # NUMBER_IMGS = 2
+    # MODE = "timed"     # can either be 'manual' or 'timed'
+
+    data_generator = ImageGenerator(SAVE_PATH, opt.LABELS)
+    eval("data_generator.{}_data_generation(number_images=opt.NUMBER_IMGS)".format(opt.MODE))
