@@ -39,6 +39,18 @@ def move_instance(image_file, target_path, extension="json"):
     print("Moved: {}".format(image_name))
 
 
+def move_everything(source_path, target_path):
+    """
+    This function moves every file from within source_path to target_path
+
+    :param source_path: the source directory wherein the files are present.
+    :param target_path: the directory where the files should be moved.
+    :return: None
+    """
+    for file in glob.glob(os.path.join(source_path, "*")):
+        shutil.move(file, os.path.join(target_path ,os.path.basename(file)))
+
+
 if __name__ == '__main__':
     DATA_PATH = paths.DATA_PATH
     REGEX_SOURCE_IMAGES = os.path.join(DATA_PATH, "not_yet_annotated", "*.jpg")
