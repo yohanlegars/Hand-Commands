@@ -24,10 +24,10 @@ Once the folders that will contain the generated images are created, you can sta
 performing a static hand gesture.
 To take the pictures, move to `repo/code/datasets/` and print the following command in your command line:
 ````
-python image_generator.py 
+python image_generator.py --LABELS ['label1', 'label2', ...] --NUMBER_IMGS 3
 ````
 You will be given 3 seconds to bring your hand in the correct position, a picture will be taken and it will 
-move on to the next pictures. This process will be repeated as many times as defined by the number of classes that you chose and the number of instances generated for each class. The process can be aborted by pressing `q`.
+move on to the next pictures. This process will be repeated as many times as defined by the number of classes that you chose and the number of instances generated for each class (3 in this example). The process can be aborted by pressing `q`.
 The default classes are those from our personal project `['stop', 'backward', 'forward', 'left', 'right']`. For more information regarding our project, you can consult this blog post 'blog post link here'.
 
 We performed the manual annotations using labelImg package. The package can be installed with `pip3 install labelImg`.  By taking createML in the left column of the application,
