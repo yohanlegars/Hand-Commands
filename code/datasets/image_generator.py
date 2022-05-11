@@ -65,8 +65,8 @@ class DataGenerator(object):
                         print("Failed to capture frame")
                         break
 
-                    cv2.putText(frame, label, (100, 100), font, 4, (255, 0, 0))
-                    cv2.putText(frame, str(round(3 - (time.time()-current_time), 2)), (100, 200), font, 4, (255, 0, 0))
+                    cv2.putText(frame, label, (100, 100), font, 4, (0, 0, 255))
+                    cv2.putText(frame, str(round(3 - (time.time()-current_time), 2)), (100, 200), font, 4, (0, 0, 255))
                     cv2.imshow(window_name, frame)
                     k = cv2.waitKey(125)
 
