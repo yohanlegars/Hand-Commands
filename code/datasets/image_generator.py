@@ -27,7 +27,7 @@ class DataGenerator(object):
         :param number_images: number of instances to generate per label.
         :return: None
         """
-        window_name = "Python Webcam: Manual Snapshots"
+        window_name = "Python Webcam: Timed Snapshots"
         font = cv2.FONT_HERSHEY_SIMPLEX
         cv2.namedWindow(window_name)
 
