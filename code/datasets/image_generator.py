@@ -9,7 +9,7 @@ import uuid
 import paths
 
 
-class DataGenerator(object):
+class ImageGenerator(object):
     def __init__(self, IMAGES_PATH, capture_arg=0):
         """
         The constructor of the Data Generator.
@@ -141,5 +141,5 @@ if __name__ == '__main__':
     NUMBER_IMGS = 2
     MODE = "timed"     # can either be 'manual' or 'timed'
 
-    data_generator = DataGenerator(SAVE_PATH)
+    data_generator = ImageGenerator(SAVE_PATH)
     eval("data_generator.{}_data_generation(number_images=NUMBER_IMGS)".format(MODE))
