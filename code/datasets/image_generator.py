@@ -10,7 +10,7 @@ import paths
 
 
 class DataGenerator(object):
-    def __init__(self, IMAGES_PATH):
+    def __init__(self, IMAGES_PATH, capture_arg=0):
         """
         The constructor of the Data Generator.
 
@@ -18,12 +18,14 @@ class DataGenerator(object):
         """
         self.image_path = IMAGES_PATH
         self.labels = LABELS
-        self.capture = cv2.VideoCapture(0)
+        self.capture = cv2.VideoCapture(capture_arg)
 
-    def timed_data_generation(self, number_images):
+    def timed_data_generation(self, number_images, headsup_time=3, timer=3):
         """
         This method takes snapshots of the webcam on a regular timer.
 
+        :param timer: time between snapshots, in seconds.
+        :param headsup_time: time to wait before starting the snapshots, at the start of the process, in seconds.
         :param number_images: number of instances to generate per label.
         :return: None
         """
@@ -35,7 +37,7 @@ class DataGenerator(object):
         current_time = time.time()
         print("Ok, prepare for quick snapshots now:\n"
               "First label is: {}".format(self.labels[0]))
-        while time.time() < current_time + 3:
+        while time.time() < current_time + headsup_time:
             ret, frame = self.capture.read()
 
             if not ret:
@@ -56,15 +58,14 @@ class DataGenerator(object):
             for img_count in range(number_images):
                 img_name = '{}_{}.jpg'.format(label, str(uuid.uuid1()))
                 current_time = time.time()
-                while time.time() < current_time + 3:
+                while time.time() < current_time + timer:
                     ret, frame = self.capture.read()
 
                     if not ret:
                         print("Failed to capture frame")
                         break
 
-                    cv2.putText(frame, label, (100, 100), font, 4,
-                                (255, 0, 0))
+                    cv2.putText(frame, label, (100, 100), font, 4, (255, 0, 0))
                     cv2.putText(frame, str(round(3 - (time.time()-current_time), 2)), (100, 200), font, 4, (255, 0, 0))
                     cv2.imshow(window_name, frame)
                     k = cv2.waitKey(125)
@@ -136,7 +137,7 @@ if __name__ == '__main__':
 
     SAVE_PATH = os.path.join(paths.DATA_PATH, "not_yet_annotated")
     LABELS = ['stop', 'backward', 'forward', 'left', 'right']
-    NUMBER_IMGS = 5
+    NUMBER_IMGS = 2
     MODE = "timed"     # can either be 'manual' or 'timed'
 
     data_generator = DataGenerator(SAVE_PATH)
