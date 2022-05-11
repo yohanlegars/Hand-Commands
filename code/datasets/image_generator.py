@@ -132,7 +132,7 @@ class DataGenerator(object):
 
 if __name__ == '__main__':
 
-    SAVE_PATH = paths.DATA_PATH
+    SAVE_PATH = os.path.join(paths.DATA_PATH, "not_yet_annotated")
     LABELS = ['stop', 'backward', 'forward', 'left', 'right']
     NUMBER_IMGS = 5
     MODE = "timed"     # can either be 'manual' or 'timed'
