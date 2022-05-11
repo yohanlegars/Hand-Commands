@@ -48,7 +48,7 @@ def move_everything(source_path, target_path):
     :return: None
     """
     for file in glob.glob(os.path.join(source_path, "*")):
-        shutil.move(file, os.path.join(target_path ,os.path.basename(file)))
+        shutil.move(file, os.path.join(target_path, os.path.basename(file)))
 
 
 if __name__ == '__main__':
