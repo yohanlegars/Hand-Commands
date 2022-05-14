@@ -1,7 +1,7 @@
 # Hand Commands vision model
 This repository is a full implementation of a hand sign recognition computer vision model.
 More specifically, this code is intended for those who want to give hand gesture orders to their mobile robots powered by light-weight microcomputers such as Rasberry Pi.
-The deep learning model localizes the hand within an image and performs classification after being trained  on a private manually annotated image dataset. In order to scale down the model and being able to upload it into a 2GB Rasberry Pi 4,
+The deep learning model localizes the hand within an image and performs classification after being trained  on a private manually annotated image dataset. In order to scale down the model and being able to upload it into a Rasberry Pi 4 with 2GB RAM,
 the repository provides a pruning technique based on the lottery ticket hypothesis: <a href="https://arxiv.org/abs/1803.03635"> The lottery Ticket hypothesis: Finding Sparse, Trainable Neural Networks.</a>
 
 ## Installation Requirements
