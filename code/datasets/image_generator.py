@@ -140,6 +140,7 @@ if __name__ == '__main__':
     parser.add_argument('--LABELS', type=list, default=['stop', 'backward', 'forward', 'left', 'right'], help='list of classes')
     parser.add_argument('--NUMBER_IMGS', type=int, default=2, help='number of pictures per classes')
     parser.add_argument('--MODE', type=str, default="timed", help='timed or manual')
+    parser.add_argument('--confs', type=str, )
 
     opt = parser.parse_args()
 
