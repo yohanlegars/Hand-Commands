@@ -4,7 +4,7 @@ import time
 import uuid
 import argparse
 import sys
-CONFIG_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, "config"))
+CONFIG_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, "confs"))
 sys.path.append(CONFIG_PATH)
 import paths
 
