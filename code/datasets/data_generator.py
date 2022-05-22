@@ -11,10 +11,17 @@ from PIL import Image
 
 class HandCommandsDataset(torch.utils.data.Dataset):
 
-    def __init__(self, dataset_path, extension="json"):
+    def __init__(self, dataset_path, extension="json", label_format=None):
+        """
+        The initialization of the dataset
+
+        :param dataset_path: path wherein our label dictionaries and our training images are located. Dictionary/image pairs should have the same name (except for the file extension)
+        :param extension: file extension used for the label dictionaries. Only "json" available for now  #TODO: potential future work: making this work with other formats
+        """
         self.root_path = dataset_path
         self.format = extension
         self.tensor_converter = torchvision.transforms.ToTensor()
+        self.label_format = label_format
         assert self.__len__() == len(glob.glob(os.path.join(self.root_path, "*.jpg"))),\
             "Incomplete input/output pairs, check Dataset Folder:\n{}".format(self.root_path)
 

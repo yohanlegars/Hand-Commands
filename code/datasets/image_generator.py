@@ -2,7 +2,7 @@ import cv2
 import os
 import time
 import uuid
-import argparse
+import configargparse
 import sys
 CONFIG_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, "confs"))
 sys.path.append(CONFIG_PATH)
@@ -136,18 +136,16 @@ class ImageGenerator(object):
 
 if __name__ == '__main__':
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--LABELS', type=list, default=['stop', 'backward', 'forward', 'left', 'right'], help='list of classes')
-    parser.add_argument('--NUMBER_IMGS', type=int, default=2, help='number of pictures per classes')
-    parser.add_argument('--MODE', type=str, default="timed", help='timed or manual')
-    parser.add_argument('--confs', type=str, )
+    parser = configargparse.ArgumentParser(default_config_files=[os.path.join(paths.CONFS_PATH, "image_capture.conf")])
+    parser.add_argument('--LABELS', type=str, nargs='+', help='list of classes')
+    parser.add_argument('--NUMBER_IMGS', type=int, help='number of pictures per classes')
+    parser.add_argument('--MODE', type=str, help='either "timed" or "manual"')
+    parser.add_argument('--CAPTURE_ARG', type=int, help='Capture argument for the opencv videocapture process')
 
     opt = parser.parse_args()
+    print(opt)
 
     SAVE_PATH = os.path.join(paths.DATA_PATH, "not_yet_annotated")
-    # LABELS = ['stop', 'backward', 'forward', 'left', 'right']
-    # NUMBER_IMGS = 2
-    # MODE = "timed"     # can either be 'manual' or 'timed'
 
-    data_generator = ImageGenerator(SAVE_PATH, opt.LABELS)
+    data_generator = ImageGenerator(SAVE_PATH, opt.LABELS, opt.CAPTURE_ARG)
     eval("data_generator.{}_data_generation(number_images=opt.NUMBER_IMGS)".format(opt.MODE))
