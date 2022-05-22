@@ -11,7 +11,7 @@ from PIL import Image
 
 class HandCommandsDataset(torch.utils.data.Dataset):
 
-    def __init__(self, dataset_path, extension="json", label_format=None):
+    def __init__(self, dataset_path, extension="json"):
         """
         The initialization of the dataset
 
@@ -21,7 +21,7 @@ class HandCommandsDataset(torch.utils.data.Dataset):
         self.root_path = dataset_path
         self.format = extension
         self.tensor_converter = torchvision.transforms.ToTensor()
-        self.label_format = label_format
+
         assert self.__len__() == len(glob.glob(os.path.join(self.root_path, "*.jpg"))),\
             "Incomplete input/output pairs, check Dataset Folder:\n{}".format(self.root_path)
 
