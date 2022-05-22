@@ -30,13 +30,9 @@ class HandCommandsDataset(torch.utils.data.Dataset):
             - instance_name, a string, specifying the file names of the image and labels for this training instance
         """
         annot_file = sorted(glob.glob(os.path.join(self.root_path, "*." + self.format)))[idx]
-        print(annot_file)
         image_file = annot_file.split(".")[0] + ".jpg"
-        print(image_file)
         with open(annot_file) as f:
             annot_dict = json.load(f)
-
-        print(json.dumps(annot_dict, indent=4))
 
         instance_name = annot_dict[0]["image"].split(".")[0]     # removing the ".jpg extension"
         label = annot_dict[0]["annotations"][0]["label"]

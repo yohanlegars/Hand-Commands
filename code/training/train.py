@@ -6,7 +6,7 @@ class Trainer():
                  model: torch.nn.Module,
                  data_loader: torch.utils.data.DataLoader,
                  loss_fn: torch.nn.Module,
-                 optimizer = torch.optim.Optimizer):
+                 optimizer: torch.optim.Optimizer):
         self.model = model
         self.data_loader = data_loader
         self.loss_fn = loss_fn

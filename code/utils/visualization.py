@@ -18,13 +18,11 @@ def label_tensor_to_bbox_tensor(label_tensor):
     return torch.tensor([x_min, y_min, x_max, y_max], dtype=torch.int)
 
 
-def visualize_single_instance(idx):
+def visualize_single_instance(dataset, idx):
     """
     :param idx: index of the instance
     :return: None
     """
-    path = os.path.join(paths.DATA_PATH, "annotated")
-    dataset = data_generator.HandCommandsDataset(path)
     image, labeltensor, label, _ = dataset.__getitem__(idx)
     bbox = label_tensor_to_bbox_tensor(labeltensor)
     label = [label]
@@ -35,4 +33,8 @@ def visualize_single_instance(idx):
 
 
 if __name__ == '__main__':
-    visualize_single_instance(5)
+    path = os.path.join(paths.DATA_PATH, "annotated")
+    custom_dataset = data_generator.HandCommandsDataset(path)
+    for i in range(len(custom_dataset)):
+
+        visualize_single_instance(custom_dataset, i)
