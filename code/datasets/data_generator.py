@@ -2,11 +2,10 @@ import json
 import torch
 import glob
 import os
-import paths
+import code.confs.paths as paths
 import torchvision
-import matplotlib.pyplot as plt
-import visualization
 from PIL import Image
+import configargparse
 
 
 class HandCommandsDataset(torch.utils.data.Dataset):
@@ -20,6 +19,7 @@ class HandCommandsDataset(torch.utils.data.Dataset):
         """
         self.root_path = dataset_path
         self.format = extension
+        self.label_list = self.get_label_list()
         self.tensor_converter = torchvision.transforms.ToTensor()
 
         assert self.__len__() == len(glob.glob(os.path.join(self.root_path, "*.jpg"))),\
@@ -42,18 +42,18 @@ class HandCommandsDataset(torch.utils.data.Dataset):
             annot_dict = json.load(f)
 
         instance_name = annot_dict[0]["image"].split(".")[0]     # removing the ".jpg extension"
-        label = annot_dict[0]["annotations"][0]["label"]
-        label_tensor = self.get_label_tensor(annot_dict[0]["annotations"][0]["coordinates"])
+        label_tensor = self.get_label_tensor(annot_dict[0]["annotations"][0]["label"])
+        coord_tensor = self.get_coord_tensor(annot_dict[0]["annotations"][0]["coordinates"])
 
         img = Image.open(image_file)
         transform = torchvision.transforms.Compose([torchvision.transforms.PILToTensor()])
         img = transform(img)
-        return img, label_tensor, label, instance_name
+        return img, coord_tensor, label_tensor, instance_name
 
     def __len__(self):
         return len(glob.glob(os.path.join(self.root_path, "*." + self.format)))
 
-    def get_label_tensor(self, coords: dict):
+    def get_coord_tensor(self, coords: dict):
         """
         extracts label coordinates from a dictionary into a torch tensor
         :param coords: dictionary of coords
@@ -63,19 +63,43 @@ class HandCommandsDataset(torch.utils.data.Dataset):
         y = int(coords["y"])
         width = int(coords["width"])
         height = int(coords["height"])
-        return torch.tensor([x, y, width, height], dtype=torch.int)
+        return torch.tensor([x, y, width, height], dtype=torch.float32)
+
+    def get_label_tensor(self, label: str):
+        """
+        extracts label string and turns it into a one hot encoded torch tensor
+        :param label: label, as a string
+        :return: torch tensor
+        """
+        tensor = torch.tensor(data=self.label_list.index(label))
+        tensor = torch.nn.functional.one_hot(tensor, num_classes=len(self.label_list))
+        tensor = tensor.clone().detach()
+        return tensor.float()
+
+    def get_label_list(self):
+        label_list = []
+        for file in sorted(glob.glob(os.path.join(self.root_path, "*." + self.format))):
+            with open(file) as f:
+                annot_dict = json.load(f)
+            label_list.append(annot_dict[0]["annotations"][0]["label"])
+        return list(dict.fromkeys(label_list))  # removes duplicates
 
 
 if __name__ == '__main__':
 
     DATA_PATH = os.path.join(paths.DATA_PATH, "annotated")
-    dataset = HandCommandsDataset(DATA_PATH)
-    index = 4
 
-    image, labeltensor, label, name = dataset.__getitem__(index)
-    print(f"{image=}")
-    print(f"{image.shape=}")
-    print(f"{labeltensor=}")
-    print(f"{labeltensor.shape=}")
-    print(f"{label=}")
-    print(f"{name=}")
+    dataset = HandCommandsDataset(dataset_path=DATA_PATH)
+
+    print(dataset.get_label_list())
+
+    for index in range(len(dataset)):
+        image, coord_tensor, label_tensor, name = dataset.__getitem__(index)
+        print(f"{image=}")
+        print(f"{image.shape=}")
+        print(f"{coord_tensor=}")
+        print(f"{coord_tensor.shape=}")
+        print(f"{label_tensor=}")
+        print(f"{label_tensor.shape=}")
+        print(f"{name=}")
+        print("")
