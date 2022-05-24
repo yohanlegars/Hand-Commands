@@ -5,14 +5,15 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torchvision import models
 
+
 class BB_model(nn.Module):
-    def __init__(self):
+    def __init__(self, num_classes):
         super(BB_model, self).__init__()
         resnet = models.resnet34(pretrained=True)
         layers = list(resnet.children())[:8]
         self.features1 = nn.Sequential(*layers[:6])
         self.features2 = nn.Sequential(*layers[6:])
-        self.classifier = nn.Sequential(nn.BatchNorm1d(512), nn.Linear(512, 4))
+        self.classifier = nn.Sequential(nn.BatchNorm1d(512), nn.Linear(512, num_classes))
         self.bb = nn.Sequential(nn.BatchNorm1d(512), nn.Linear(512, 4))
 
     def forward(self, x):
