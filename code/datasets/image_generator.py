@@ -3,10 +3,7 @@ import os
 import time
 import uuid
 import configargparse
-import sys
-CONFIG_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, "confs"))
-sys.path.append(CONFIG_PATH)
-import paths
+import code.confs.paths as paths
 
 
 class ImageGenerator(object):

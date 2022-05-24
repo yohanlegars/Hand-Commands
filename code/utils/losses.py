@@ -25,7 +25,7 @@ For Regression / Localization of Sign:
 
 
 """
-import code.datasets.data_generator
+import code.datasets.data_generator as data_generator
 import torch
 
 # # Example of target with class indices
