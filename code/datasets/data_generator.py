@@ -95,6 +95,15 @@ class HandCommandsDataset(torch.utils.data.Dataset):
         return sorted(list(dict.fromkeys(label_list)))  # removes duplicates
 
 
+def generate_dataset_splits(dataset, splitratio):
+    split_one_amount = int(splitratio * len(dataset))
+    split_two_amount = len(dataset) - split_one_amount
+    assert len(dataset) == split_one_amount + split_two_amount
+
+    split_one, split_two = torch.utils.data.random_split(dataset, [split_one_amount, split_two_amount])
+    return split_one, split_two
+
+
 if __name__ == '__main__':
 
     DATA_PATH = os.path.join(paths.DATA_PATH, "annotated")

@@ -11,14 +11,6 @@ from tqdm import tqdm
 
 # partly inspired by: https://towardsdatascience.com/bounding-box-prediction-from-scratch-using-pytorch-a8525da51ddc
 
-def generate_dataset_splits(dataset, splitratio):
-    split_one_amount = int(splitratio * len(dataset))
-    split_two_amount = len(dataset) - split_one_amount
-    assert len(dataset) == split_one_amount + split_two_amount
-
-    split_one, split_two = torch.utils.data.random_split(dataset, [split_one_amount, split_two_amount])
-    return split_one, split_two
-
 
 class Trainer(object):
     def __init__(self,
@@ -128,7 +120,7 @@ if __name__ == '__main__':
 
     hand_commands_dataset = data_generator.HandCommandsDataset(dataset_path=path)
 
-    train_split, test_split = generate_dataset_splits(hand_commands_dataset, options.TRAIN_TEST_SPLIT)
+    train_split, test_split = data_generator.generate_dataset_splits(hand_commands_dataset, options.TRAIN_TEST_SPLIT)
 
     model = resnet34.BB_model(num_classes=len(hand_commands_dataset.label_list)).cuda()
     parameters = filter(lambda p: p.requires_grad, model.parameters())

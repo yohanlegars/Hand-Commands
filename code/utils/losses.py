@@ -4,7 +4,7 @@ This section describes and organises the potential loss functions we are conside
 
 
 For Label Classification:
-Let N be the number of different labels, and B the Batch Size. then 'input' and 'target' are defined by:
+Let N be the number of different labels, and B the Batch Size. Then 'input' and 'target' are defined by:
 
     - 'input': a [B, N] tensor, each row containing the probability of belonging to class 'n'.
         For example, with N = 3 and B = 2, 'input' could be:
@@ -17,12 +17,16 @@ Let N be the number of different labels, and B the Batch Size. then 'input' and 
                  [0.0, 0.0, 1.0]]
 
 The potential loss functions considered here are:
-    - Cross Entropy: https://pytorch.org/docs/stable/generated/torch.nn.functional.cross_entropy.html#torch.nn.functional.cross_entropy
-    - Binary Cross Entropy: https://pytorch.org/docs/stable/generated/torch.nn.functional.binary_cross_entropy.html#torch.nn.functional.binary_cross_entropy
+    - Cross Entropy: https://pytorch.org/docs/stable/generated/torch.nn.functional.cross_entropy.html
+    - Binary Cross Entropy: https://pytorch.org/docs/stable/generated/torch.nn.functional.binary_cross_entropy.html
 
 
 For Regression / Localization of Sign:
+Let B be the Batch Size. 'Input' and 'target' are defined by a [B, 4] tensor, rows are of the format (x_center, y_center, width, height)
 
+The potential loss functions considered here are:
+    - L1 loss on each component of the vectors: https://pytorch.org/docs/stable/generated/torch.nn.functional.l1_loss.html
+    - GIoU loss on the bounding box corresponding to the vector: https://pytorch.org/vision/stable/generated/torchvision.ops.generalized_box_iou_loss.html
 
 """
 import os.path
