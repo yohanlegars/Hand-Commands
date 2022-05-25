@@ -5,7 +5,6 @@ import os
 import code.confs.paths as paths
 import torchvision
 from PIL import Image
-import configargparse
 
 
 class HandCommandsDataset(torch.utils.data.Dataset):
@@ -32,8 +31,10 @@ class HandCommandsDataset(torch.utils.data.Dataset):
         :param idx: an int, which points towards a specific training instance
         :return:
             - img, a torch tensor with shape (Channels, Height, Width) --> for example (3, 480, 640)
-            - label_tensor, a torch tensor with the position and size of the bounding box. Shape is (center x, center y, width, height), dtype is torch.int
-            - label, a string, specifying the label type (for example, "stop", or "forward"...)
+            - coord_tensor, a torch tensor with the position and size of the bounding box.
+              Shape is (center x, center y, width, height), see get_coord_tensor method
+            - label_tensor, a one-hot-encoded representation of the label. Dimension is equal to number of labels.
+              See get_label_tensor method
             - instance_name, a string, specifying the file names of the image and labels for this training instance
         """
         annot_file = sorted(glob.glob(os.path.join(self.root_path, "*." + self.format)))[idx]
@@ -56,6 +57,7 @@ class HandCommandsDataset(torch.utils.data.Dataset):
     def get_coord_tensor(self, coords: dict):
         """
         extracts label coordinates from a dictionary into a torch tensor
+
         :param coords: dictionary of coords
         :return: torch tensor
         """
@@ -68,6 +70,7 @@ class HandCommandsDataset(torch.utils.data.Dataset):
     def get_label_tensor(self, label: str):
         """
         extracts label string and turns it into a one hot encoded torch tensor
+
         :param label: label, as a string
         :return: torch tensor
         """
@@ -77,12 +80,17 @@ class HandCommandsDataset(torch.utils.data.Dataset):
         return tensor.float()
 
     def get_label_list(self):
+        """
+        Extracts the total list of labels stored within the provided dataset.
+
+        :return: a list of strings, each one corresponding to a label class
+        """
         label_list = []
-        for file in sorted(glob.glob(os.path.join(self.root_path, "*." + self.format))):
+        for file in glob.glob(os.path.join(self.root_path, "*." + self.format)):
             with open(file) as f:
                 annot_dict = json.load(f)
             label_list.append(annot_dict[0]["annotations"][0]["label"])
-        return list(dict.fromkeys(label_list))  # removes duplicates
+        return sorted(list(dict.fromkeys(label_list)))  # removes duplicates
 
 
 if __name__ == '__main__':
@@ -95,11 +103,11 @@ if __name__ == '__main__':
 
     for index in range(len(dataset)):
         image, coord_tensor, label_tensor, name = dataset.__getitem__(index)
-        print(f"{image=}")
-        print(f"{image.shape=}")
-        print(f"{coord_tensor=}")
-        print(f"{coord_tensor.shape=}")
-        print(f"{label_tensor=}")
-        print(f"{label_tensor.shape=}")
-        print(f"{name=}")
-        print("")
+        # print(f"{image=}")
+        # print(f"{image.shape=}")
+        # print(f"{coord_tensor=}")
+        # print(f"{coord_tensor.shape=}")
+        # print(f"{label_tensor=}")
+        # print(f"{label_tensor.shape=}")
+        # print(f"{name=}")
+        # print("")

@@ -5,13 +5,14 @@ corresponding annotation files are also moved to the 'annotated' folder.
 import glob
 import os
 import shutil
-import paths
+import code.confs.paths as paths
 
 
 def is_annotated(image_file, extension="json"):
     """
-    Returns True or False, depending on whether the image has a corresponding .xml file in the same directory where it
+    Returns True or False, depending on whether the image has a correspondin file in the same directory where it
     is located.
+
     :param image_file: the full path name of the image file. The function checks for an annotation file in the same
     directory, with the specified extension.
     :param extension: the file type of the annotation.
