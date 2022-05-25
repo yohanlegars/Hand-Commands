@@ -145,12 +145,10 @@ if __name__ == '__main__':
     parser.add_argument('--CAPTURE_ARG', type=int, help='Capture argument for the opencv videocapture process')
     parser.add_argument('--SAVE_PATH', type=str, help='the path wherein the images should be saved')
 
-    opt = parser.parse_args()
-    print(opt)
+    options = parser.parse_args()
+    print(f"{options=}")
 
-    SAVE_PATH = os.path.join(paths.DATA_PATH, "not_yet_annotated")
-
-    data_generator = ImageGenerator(image_path=os.path.normpath(opt.SAVE_PATH),
-                                    label_list=opt.LABELS,
-                                    capture_arg=opt.CAPTURE_ARG)
-    eval("data_generator.{}_data_generation(number_images=opt.NUMBER_IMGS)".format(opt.MODE))
+    data_generator = ImageGenerator(image_path=os.path.normpath(options.SAVE_PATH),
+                                    label_list=options.LABELS,
+                                    capture_arg=options.CAPTURE_ARG)
+    eval("data_generator.{}_data_generation(number_images=opt.NUMBER_IMGS)".format(options.MODE))

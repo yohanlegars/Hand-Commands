@@ -21,6 +21,7 @@ class Trainer(object):
                  model: torch.nn.Module,
                  optimizer: torch.optim.Optimizer,
                  C: int=1000):
+        # TODO: IMPLEMENT CUSTOM LOSS FUNCTIONS IN TRAINING LOOP
         self.batch_size = batch_size
         self.train_dataset = train_dataset
         self.test_dataset = test_dataset
@@ -31,7 +32,7 @@ class Trainer(object):
                                                            batch_size=self.batch_size)
         self.classes = classes
         self.model = model
-        self.C = C
+        self.C = C          # TODO: FIGURE THIS ONE OUT WITH THE NEW LOSS FUNCTIONS
         self.optimizer = optimizer
 
     def train_single_epoch(self):
@@ -111,15 +112,18 @@ class Trainer(object):
 
 if __name__ == '__main__':
 
-    path = os.path.join(paths.DATA_PATH, "annotated")
-
     parser = configargparse.ArgumentParser(default_config_files=[os.path.join(paths.CONFS_PATH, "training.conf")])
     parser.add_argument('--TRAIN_TEST_SPLIT', type=float, help='determines the proportion of data used for training vs testing')
+    parser.add_argument('--CLASSIFICATION_LOSS', type=str, help='determines the type of classification loss function used for training')
+    parser.add_argument('--REGRESSION_LOSS', type=str, help='determines the type of regression loss function used for training')
+    parser.add_argument('--DATA_PATH', type=str, help='the path where the dataset is stored')
+    # TODO: add a model parse arg
+    # TODO: add an optimizer parse arg
 
     options = parser.parse_args()
+    print(f"{options=}")
 
-    hand_commands_dataset = data_generator.HandCommandsDataset(dataset_path=path)
-
+    hand_commands_dataset = data_generator.HandCommandsDataset(dataset_path=os.path.abspath(options.DATA_PATH))
     train_split, test_split = data_generator.generate_dataset_splits(hand_commands_dataset, options.TRAIN_TEST_SPLIT)
 
     model = resnet34.BB_model(num_classes=len(hand_commands_dataset.label_list)).cuda()
