@@ -7,19 +7,23 @@ import code.confs.paths as paths
 
 
 class ImageGenerator(object):
-    def __init__(self, IMAGES_PATH, LABELS, capture_arg=0):
+    def __init__(self, image_path, label_list, capture_arg=0):
         """
         The constructor of the Data Generator.
 
-        :param IMAGES_PATH: the path where the images should be saved, str
+        :param image_path: the path where the images should be saved, str
+        :param label_list: the list of labels to create images for
+        :param capture_arg: capture argument, for the opencv videocapture object
+        (this specified the webcam that will be used)
         """
-        self.image_path = IMAGES_PATH
-        self.labels = LABELS
+        self.image_path = image_path
+        self.labels = label_list
         self.capture = cv2.VideoCapture(capture_arg)
 
     def timed_data_generation(self, number_images, headsup_time=3, timer=3):
         """
-        This method takes snapshots of the webcam on a regular timer.
+        This method takes snapshots of the webcam on a regular timer. The images are directly saved into the
+        specified image_path of the class.
 
         :param timer: time between snapshots, in seconds.
         :param headsup_time: time to wait before starting the snapshots, at the start of the process, in seconds.
@@ -85,7 +89,8 @@ class ImageGenerator(object):
 
     def manual_data_generation(self, number_images):
         """
-        This method takes snapshots of the webcam when the spacebar is pressed.
+        This method takes snapshots of the webcam when the spacebar is pressed. The images are directly saved into the
+        specified image_path of the class.
 
         :param number_images: number of instances to generate per label.
         :return: None
@@ -138,11 +143,14 @@ if __name__ == '__main__':
     parser.add_argument('--NUMBER_IMGS', type=int, help='number of pictures per classes')
     parser.add_argument('--MODE', type=str, help='either "timed" or "manual"')
     parser.add_argument('--CAPTURE_ARG', type=int, help='Capture argument for the opencv videocapture process')
+    parser.add_argument('--SAVE_PATH', type=str, help='the path wherein the images should be saved')
 
     opt = parser.parse_args()
     print(opt)
 
     SAVE_PATH = os.path.join(paths.DATA_PATH, "not_yet_annotated")
 
-    data_generator = ImageGenerator(SAVE_PATH, opt.LABELS, opt.CAPTURE_ARG)
+    data_generator = ImageGenerator(image_path=os.path.normpath(opt.SAVE_PATH),
+                                    label_list=opt.LABELS,
+                                    capture_arg=opt.CAPTURE_ARG)
     eval("data_generator.{}_data_generation(number_images=opt.NUMBER_IMGS)".format(opt.MODE))
