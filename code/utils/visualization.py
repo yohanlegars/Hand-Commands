@@ -7,18 +7,59 @@ import matplotlib.pyplot as plt
 import configargparse
 
 
-def coord_tensor_to_bbox_tensor(coord_tensor):
+def random_bbox_tensor(B, H, W):
+    """
+    Create a random bounding box tensor
+
+    :param B: batch size
+    :param H: maximum pixel height
+    :param W: maximum pixel width
+    :return: the random bounding box tensor
+    """
+
+    x_values = torch.rand(B, 2) * W
+    y_values = torch.rand(B, 2) * H
+
+    x_values, _ = torch.sort(x_values)
+    y_values, _ = torch.sort(y_values)
+
+    x_mins, x_maxs = x_values[:, 0], x_values[:, 1]
+    y_mins, y_maxs = y_values[:, 0], y_values[:, 1]
+
+    return torch.stack((x_mins, y_mins, x_maxs, y_maxs), axis=-1)
+
+
+
+def center_tensor_to_bbox_tensor(coord_tensor):
     """
     This function can be used to convert a coordinate tensor, into its corresponding bounding box tensor
 
     :param coord_tensor: tensor([x, y, width, height])
     :return: tensor([x_min, y_min, x_max, y_max])
     """
-    x_min = int(coord_tensor[0] - 0.5 * coord_tensor[2])
-    x_max = int(coord_tensor[0] + 0.5 * coord_tensor[2])
-    y_min = int(coord_tensor[1] - 0.5 * coord_tensor[3])
-    y_max = int(coord_tensor[1] + 0.5 * coord_tensor[3])
-    return torch.tensor([x_min, y_min, x_max, y_max], dtype=torch.float32)
+    center_x, center_y, width, height = coord_tensor[:, 0], coord_tensor[:, 1], coord_tensor[:, 2], coord_tensor[:, 3]
+    x_min = center_x - 0.5 * width
+    x_max = center_x + 0.5 * width
+    y_min = center_y - 0.5 * height
+    y_max = center_y + 0.5 * height
+    bbox_tensor = torch.stack((x_min, y_min, x_max, y_max), axis=-1)
+    return bbox_tensor
+
+
+def bbox_tensor_to_center_tensor(bbox_tensor):
+    """
+    This function can be used to convert a coordinate tensor, into its corresponding bounding box tensor
+
+    :param bbox_tensor: tensor([x_min, y_min, x_max, y_max])
+    :return: tensor([x, y, width, height])
+    """
+    x_min, y_min, x_max, y_max = bbox_tensor[:, 0], bbox_tensor[:, 1], bbox_tensor[:, 2], bbox_tensor[:, 3]
+    center_x = (x_min + x_max) / 2
+    center_y = (y_min + y_max) / 2
+    width = x_max - x_min
+    height = y_max - y_min
+    coord_tensor = torch.stack((center_x, center_y, width, height), axis=-1)
+    return coord_tensor
 
 
 def label_tensor_to_string(label_tensor: torch.Tensor, label_list):
@@ -48,7 +89,8 @@ def visualize_single_instance(dataset, idx):
     :return: a tensor representation of the drawn on image. (use tensor.permute(1, 2, 0) for displaying with matplotlib)
     """
     image, coord_tensor, label_tensor, _ = dataset.__getitem__(idx)
-    bbox = coord_tensor_to_bbox_tensor(coord_tensor)
+    coord_tensor = torch.reshape(coord_tensor, (1, -1))
+    bbox = center_tensor_to_bbox_tensor(coord_tensor)
     bbox = torch.reshape(bbox, (1, -1))
     label = label_tensor_to_string(label_tensor, dataset.label_list)
     label = [label]

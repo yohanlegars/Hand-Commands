@@ -25,30 +25,24 @@ For Regression / Localization of Sign:
 
 
 """
-import code.datasets.data_generator as data_generator
+import os.path
 import torch
+import torchvision
+import code.utils.visualization as visualization
+import code.datasets.data_generator as data_generator
+import code.confs.paths as paths
 
-# # Example of target with class indices
-# loss = torch.nn.CrossEntropyLoss()
-# input_tensor = torch.randn(3, 5, requires_grad=True)
-# target = torch.empty(3, dtype=torch.long).random_(5)
-# output = loss(input_tensor, target)
-#
-# print(f"{input_tensor=}")
-# print(f"{target=}")
-# print(f"{output=}")
-#
-# output.backward()
-#
-# # Example of target with class probabilities
-# input_tensor = torch.randn(3, 5, requires_grad=True)
-# target = torch.randn(3, 5).softmax(dim=1)
-# output = loss(input_tensor, target)
-# output.backward()
-#
-# print(f"{input_tensor=}")
-# print(f"{target=}")
-# print(f"{output=}")
+
+def GIoU_loss(coord_pred, coord_truth):
+    truth_bbox = visualization.center_tensor_to_bbox_tensor(coord_truth)
+    pred_bbox = visualization.center_tensor_to_bbox_tensor(coord_pred)
+    return torchvision.ops.generalized_box_iou_loss(truth_bbox, pred_bbox, reduction='mean')
+
+
+losses = {"Classification": {"CE": torch.nn.functional.cross_entropy,
+                         "BCE": torch.nn.functional.binary_cross_entropy},
+          "Regression": {"L1": torch.nn.functional.l1_loss,
+                         "GIoU": GIoU_loss}}
 
 
 if __name__ == '__main__':
@@ -57,33 +51,33 @@ if __name__ == '__main__':
     with shape and format that will be used during regular training.
     """
     B = 5       # Batch Size
-    N = 2       # Number of labels
+    classification_loss_fn = losses["Classification"]["CE"]
+    regression_loss_fn = losses["Regression"]["GIoU"]
+    instances_to_check = [0, 1, 2, 3, 4, 5, 6, 7]
 
-    print("SIMULATING OUTPUTS FOR CLASSIFICATION + LOSS\n\n")
-
-    class_target = torch.empty(B, dtype=torch.long).random_(N)
-    class_target = torch.nn.functional.one_hot(class_target, num_classes=N)
-    class_target = class_target.type(torch.float32)
-
-    class_input = torch.randn([B, N], requires_grad=True)
-    class_input = torch.softmax(class_input, dim=1)
-
-    # if you want to check the loss for a "perfect prediction"
-    # class_input = torch.tensor(class_target, requires_grad=True)
-
-    print(f"{class_input=}\n")
-    print(f"{class_target=}\n")
-
-    # CE_loss = torch.nn.functional.cross_entropy(class_input, class_target)
-    # print(f"{CE_loss=}")
-    # CE_loss.backward()
-
-    BCE_loss = torch.nn.functional.binary_cross_entropy(class_input, class_target)
-    BCE_loss.backward()
-    print(f"{BCE_loss=}\n\n\n")
+    path = os.path.join(paths.DATA_PATH, "annotated")
+    dataset = data_generator.HandCommandsDataset(path)
+    subset = torch.utils.data.Subset(dataset, instances_to_check)
+    dataloader = torch.utils.data.DataLoader(dataset, batch_size=B, shuffle=True)
 
 
-    print("SIMULATING OUTPUTS FOR REGRESSION + LOSS\n\n")
+    print("SIMULATING OUTPUTS FOR CLASSIFICATION + LOSS\n")
+    for img, coord_tensor, label_tensor, _ in dataloader:
 
+        label_pred = torch.randn([B, len(dataset.label_list)], requires_grad=True)
+        label_pred = torch.softmax(label_pred, dim=1)
 
+        classification_loss = classification_loss_fn(label_pred, label_tensor)
+        print(f"loss = {classification_loss}")
+        classification_loss.backward()
 
+    print("\n\nSIMULATING OUTPUTS FOR REGRESSION + LOSS\n\n")
+    for img, coord_tensor, label_tensor, _ in dataloader:
+
+        coord_pred = visualization.random_bbox_tensor(B=B, H=480, W=640)
+        coord_pred = visualization.bbox_tensor_to_center_tensor(coord_pred)
+        coord_pred.requires_grad = True
+
+        regression_loss = regression_loss_fn(coord_pred, coord_tensor)
+        print(f"loss = {regression_loss}")
+        regression_loss.backward()

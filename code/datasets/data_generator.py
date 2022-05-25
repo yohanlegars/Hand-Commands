@@ -65,7 +65,8 @@ class HandCommandsDataset(torch.utils.data.Dataset):
         y = int(coords["y"])
         width = int(coords["width"])
         height = int(coords["height"])
-        return torch.tensor([x, y, width, height], dtype=torch.float32)
+        tensor = torch.tensor([x, y, width, height], dtype=torch.float32)
+        return tensor
 
     def get_label_tensor(self, label: str):
         """
@@ -77,7 +78,8 @@ class HandCommandsDataset(torch.utils.data.Dataset):
         tensor = torch.tensor(data=self.label_list.index(label))
         tensor = torch.nn.functional.one_hot(tensor, num_classes=len(self.label_list))
         tensor = tensor.clone().detach()
-        return tensor.float()
+        tensor = tensor.float()
+        return tensor
 
     def get_label_list(self):
         """
@@ -103,11 +105,11 @@ if __name__ == '__main__':
 
     for index in range(len(dataset)):
         image, coord_tensor, label_tensor, name = dataset.__getitem__(index)
-        # print(f"{image=}")
-        # print(f"{image.shape=}")
-        # print(f"{coord_tensor=}")
-        # print(f"{coord_tensor.shape=}")
-        # print(f"{label_tensor=}")
-        # print(f"{label_tensor.shape=}")
-        # print(f"{name=}")
-        # print("")
+        print(f"{image=}")
+        print(f"{image.shape=}")
+        print(f"{coord_tensor=}")
+        print(f"{coord_tensor.shape=}")
+        print(f"{label_tensor=}")
+        print(f"{label_tensor.shape=}")
+        print(f"{name=}")
+        print("")
