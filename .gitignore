@@ -2,4 +2,3 @@
 data
 code/confs/image_capture.conf
 code/confs/training.conf
-code/confs/paths.py
