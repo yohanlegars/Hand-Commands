@@ -101,15 +101,6 @@ def visualize_single_instance(dataset, idx):
 if __name__ == '__main__':
     path = os.path.join(paths.DATA_PATH, "annotated")
 
-    parser = configargparse.ArgumentParser(default_config_files=[os.path.join(paths.CONFS_PATH, "training.conf")])
-    parser.add_argument('--LABELS', type=str, nargs='+', help='list of classes')
-    parser.add_argument('--TRAIN_TEST_SPLIT', type=float,
-                        help='determines the proportion of data used for training vs testing')
-    parser.add_argument('--CLASSIFICATION_LOSS')
-    parser.add_argument('--REGRESSION_LOSS')
-    parser.add_argument('--DATA_PATH')
-    options = parser.parse_args()
-
     custom_dataset = data_generator.HandCommandsDataset(dataset_path=path)
     for i in range(len(custom_dataset)):
         image = visualize_single_instance(custom_dataset, i)
