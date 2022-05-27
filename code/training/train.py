@@ -5,10 +5,9 @@ import torch.utils.data
 import torch
 import code.datasets.data_generator as data_generator
 import code.confs.paths as paths
-import code.models.resnet34 as resnet34
 from tqdm import tqdm
 from code.utils.losses import losses
-import code.utils.visualization as visualization
+from code.utils.models_catalog import models
 
 # partly inspired by: https://towardsdatascience.com/bounding-box-prediction-from-scratch-using-pytorch-a8525da51ddc
 
@@ -23,7 +22,6 @@ class Trainer(object):
                  test_dataset,
                  classification_loss_fn,
                  regression_loss_fn):
-        # TODO: IMPLEMENT CUSTOM LOSS FUNCTIONS IN TRAINING LOOP
         self.model = model
         self.optimizer = optimizer
         self.batch_size = batch_size
@@ -42,32 +40,17 @@ class Trainer(object):
         self.model.train()
         total_instances_seen = 0
         sum_loss = 0
-        for img, coord_tensor, label_tensor, instance_name in self.train_dataloader:
-            # batch = label.shape[0]        # equivalent to self.batch_size
-            img = img.cuda().float()
-            label_tensor = label_tensor.cuda()
-            coord_tensor = coord_tensor.cuda().float()
-            # print(f"{img=}")
-            # print(f"{label_tensor=}")
-            print(f"{coord_tensor=}")
-            print(f"{coord_tensor.shape=}")
+        for input_img, coord_truth, label_truth, instance_name in self.train_dataloader:
+            input_img = input_img.cuda().float()
+            label_truth = label_truth.cuda()
+            coord_truth = coord_truth.cuda().float()
 
-            out_class, out_coord = self.model(img)
+            label_pred, coord_pred = self.model(input_img)
+            label_pred = torch.nn.functional.softmax(label_pred, dim=-1)
 
-            out_coord = torch.sigmoid(out_coord)
-            # print(f"{out_class=}")
-            print(f"{out_coord=}")
-            print(f"{out_coord.shape=}")
-
-            out_bbox = visualization.center_tensor_to_bbox_tensor(out_coord)
-            coord_bbox = visualization.center_tensor_to_bbox_tensor(coord_tensor)
-
-            loss_class = self.classification_loss_fn(out_class, label_tensor)
-            loss_coords = self.regression_loss_fn(out_bbox, coord_bbox)
+            loss_class = self.classification_loss_fn(label_pred, label_truth)
+            loss_coords = self.regression_loss_fn(coord_pred, coord_truth)
             loss = loss_class + loss_coords
-            # print(f"{loss_class=}")
-            # print(f"{loss_coords=}")
-            # print(f"{loss=}")
 
             self.optimizer.zero_grad()
             loss.backward()
@@ -82,26 +65,20 @@ class Trainer(object):
         self.model.eval()
         total_instances_seen = 0
         sum_loss = 0
-        for img, coord_tensor, label_tensor, instance_name in self.test_dataloader:
-            img = img.cuda().float()
-            coord_tensor = coord_tensor.cuda()
-            label_tensor = label_tensor.cuda().float()
-            # print(f"{img=}")
-            # print(f"{coord_tensor=}")
-            # print(f"{label_tensor=}")
+        for input_img, coord_truth, label_truth, instance_name in self.test_dataloader:
+            input_img = input_img.cuda().float()
+            coord_truth = coord_truth.cuda()
+            label_truth = label_truth.cuda().float()
 
-            out_class, out_coord = self.model(img)
-            # print(f"{out_class=}")
-            # print(f"{out_coord=}")
+            label_pred, coord_pred = self.model(input_img)
+            label_pred = torch.nn.functional.softmax(label_pred, dim=-1)
 
-            loss_class = self.classification_loss_fn(out_class, label_tensor)
-            loss_coords = self.regression_loss_fn(out_coord, coord_tensor)
+            loss_class = self.classification_loss_fn(label_pred, label_truth)
+            loss_coords = self.regression_loss_fn(coord_pred, coord_truth)
             loss = loss_class + loss_coords
-            # print(f"{loss_class=}")
-            # print(f"{loss_coords=}")
-            # print(f"{loss=}")
-            sum_loss += loss.item()
+
             total_instances_seen += self.batch_size
+            sum_loss += loss.item()
         test_loss = sum_loss/total_instances_seen
         return test_loss
 
@@ -127,8 +104,9 @@ if __name__ == '__main__':
     parser.add_argument('--CLASSIFICATION_LOSS', type=str, help='determines the type of classification loss function used for training')
     parser.add_argument('--REGRESSION_LOSS', type=str, help='determines the type of regression loss function used for training')
     parser.add_argument('--DATA_PATH', type=str, help='the path where the dataset is stored')
-    # TODO: add a model parse arg
-    # TODO: add an optimizer parse arg
+    parser.add_argument('--MODEL', type=str, help='the model chosen for training')
+    parser.add_argument('--OPTIMIZER', type=str, help='the optimizer chosen for surfing on the loss function')
+    parser.add_argument('--N_EPOCHS', type=int, help='number of epochs to train for')
 
     options = parser.parse_args()
     print(f"{options=}")
@@ -136,9 +114,9 @@ if __name__ == '__main__':
     hand_commands_dataset = data_generator.HandCommandsDataset(dataset_path=os.path.abspath(options.DATA_PATH))
     train_split, test_split = data_generator.generate_dataset_splits(hand_commands_dataset, options.TRAIN_TEST_SPLIT)
 
-    model = resnet34.BB_model(num_classes=len(hand_commands_dataset.label_list)).cuda()
+    model = models[options.MODEL]
     parameters = filter(lambda p: p.requires_grad, model.parameters())
-    optimizer = torch.optim.Adam(parameters, lr=0.005)
+    optimizer = eval("torch.optim.{}(parameters)".format(options.OPTIMIZER))
 
     trainer = Trainer(train_dataset=train_split,
                       test_dataset=test_split,
@@ -149,12 +127,12 @@ if __name__ == '__main__':
                       classification_loss_fn=losses["classification"][options.CLASSIFICATION_LOSS],
                       regression_loss_fn=losses["regression"][options.REGRESSION_LOSS])
 
-    train_L, test_L = trainer.train_for(20)
+    train_L, test_L = trainer.train_for(options.N_EPOCHS)
 
     fig, ax = plt.subplots()
 
-    ax.plot(list(range(20)), train_L, label="TRAIN")
-    ax.plot(list(range(20)), test_L, label="TEST")
+    ax.plot(list(range(options.N_EPOCHS)), train_L, label="TRAIN")
+    ax.plot(list(range(options.N_EPOCHS)), test_L, label="TEST")
     ax.legend()
     plt.show()
 

@@ -45,12 +45,14 @@ def BCE_loss(label_pred, label_truth, weight=1/20):
     return weight * torch.nn.functional.binary_cross_entropy(label_pred, label_truth, reduction='mean')
 
 
-def L1_loss(pred_bbox, truth_bbox, weight=1/240):
-    return weight * torch.nn.functional.l1_loss(pred_bbox, truth_bbox, reduction='mean')
+def L1_loss(tensor_pred, tensor_truth, weight=1/240):
+    return weight * torch.nn.functional.l1_loss(tensor_pred, tensor_truth, reduction='mean')
 
 
-def GIoU_loss(pred_bbox, truth_bbox, weight=1):
-    return weight * torchvision.ops.generalized_box_iou_loss(truth_bbox, pred_bbox, reduction='mean')
+def GIoU_loss(coord_pred, coord_truth, weight=1):
+    pred = visualization.center_tensor_to_bbox_tensor(coord_pred)
+    truth = visualization.center_tensor_to_bbox_tensor(coord_truth)
+    return weight * torchvision.ops.generalized_box_iou_loss(pred, truth, reduction='mean')
 
 
 losses = {"classification": {"CE": CE_loss,
