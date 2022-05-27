@@ -37,32 +37,30 @@ import code.datasets.data_generator as data_generator
 import code.confs.paths as paths
 
 
-def CE_loss(label_pred, label_truth):
-    return torch.nn.functional.cross_entropy(label_pred, label_truth, reduction='mean')
+def CE_loss(label_pred, label_truth, weight=2):
+    return weight * torch.nn.functional.cross_entropy(label_pred, label_truth, reduction='mean')
 
 
-def BCE_loss(label_pred, label_truth):
-    return torch.nn.functional.binary_cross_entropy(label_pred, label_truth, reduction='mean')
+def BCE_loss(label_pred, label_truth, weight=1/20):
+    return weight * torch.nn.functional.binary_cross_entropy(label_pred, label_truth, reduction='mean')
 
 
-def L1_loss(coord_pred, coord_truth):
-    return torch.nn.functional.l1_loss(coord_pred, coord_truth, reduction='mean')
+def L1_loss(pred_bbox, truth_bbox, weight=1/240):
+    return weight * torch.nn.functional.l1_loss(pred_bbox, truth_bbox, reduction='mean')
 
 
-def GIoU_loss(coord_pred, coord_truth):
-    truth_bbox = visualization.center_tensor_to_bbox_tensor(coord_truth)
-    pred_bbox = visualization.center_tensor_to_bbox_tensor(coord_pred)
-    return torchvision.ops.generalized_box_iou_loss(truth_bbox, pred_bbox, reduction='mean')
+def GIoU_loss(pred_bbox, truth_bbox, weight=1):
+    return weight * torchvision.ops.generalized_box_iou_loss(truth_bbox, pred_bbox, reduction='mean')
 
 
-losses = {"Classification": {"CE": CE_loss,
+losses = {"classification": {"CE": CE_loss,
                          "BCE": BCE_loss},
-          "Regression": {"L1": L1_loss,
+          "regression": {"L1": L1_loss,
                          "GIoU": GIoU_loss}}
 
 
 def evaluate_class_loss(loss_type, batch_size, n_classes, dataloader):
-    classification_loss_fn = losses["Classification"][loss_type]
+    classification_loss_fn = losses["classification"][loss_type]
 
     print(f"SIMULATING OUTPUTS FOR CLASSIFICATION + LOSS: {loss_type}")
     for _, _, label_tensor, _ in dataloader:
@@ -92,12 +90,12 @@ def evaluate_class_loss(loss_type, batch_size, n_classes, dataloader):
 
 
 def evaluate_regression_loss(loss_type, batch_size, dataloader):
-    regression_loss_fn = losses["Regression"][loss_type]
+    regression_loss_fn = losses["regression"][loss_type]
 
     print(f"SIMULATING OUTPUTS FOR REGRESSION + LOSS: {loss_type}")
     for _, coord_tensor, _, _ in dataloader:
         coord_pred = visualization.random_bbox_tensor(B=batch_size, H=480, W=640)
-        coord_pred = visualization.bbox_tensor_to_center_tensor(coord_pred)
+        # coord_pred = visualization.bbox_tensor_to_center_tensor(coord_pred)
         coord_pred.requires_grad = True
 
         regression_loss = regression_loss_fn(coord_pred, coord_tensor)
@@ -105,8 +103,8 @@ def evaluate_regression_loss(loss_type, batch_size, dataloader):
         regression_loss.backward()
 
     image_pixel_resolution = (640, 480)
-    box_width = 20
-    box_height = 30
+    box_width = 120
+    box_height = 60
     coord_tensor = torch.stack(batch_size * [torch.tensor([box_width / 2,
                                                   box_height / 2,
                                                   box_width,
@@ -121,6 +119,9 @@ def evaluate_regression_loss(loss_type, batch_size, dataloader):
                                                     box_width,
                                                     box_height], dtype=torch.float32)])
     bad_coord_pred.requires_grad = True
+    coord_tensor = visualization.center_tensor_to_bbox_tensor(coord_tensor)
+    perf_coord_pred = visualization.center_tensor_to_bbox_tensor(perf_coord_pred)
+    bad_coord_pred = visualization.center_tensor_to_bbox_tensor(bad_coord_pred)
 
     print(f"For a ground truth tensor:\t\t\n{coord_tensor}")
     print(f"Best possible prediction tensor:\t\n{perf_coord_pred}")

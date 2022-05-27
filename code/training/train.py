@@ -7,22 +7,27 @@ import code.datasets.data_generator as data_generator
 import code.confs.paths as paths
 import code.models.resnet34 as resnet34
 from tqdm import tqdm
-
+from code.utils.losses import losses
+import code.utils.visualization as visualization
 
 # partly inspired by: https://towardsdatascience.com/bounding-box-prediction-from-scratch-using-pytorch-a8525da51ddc
 
 
 class Trainer(object):
     def __init__(self,
-                 train_dataset: data_generator.HandCommandsDataset,
-                 test_dataset: data_generator.HandCommandsDataset,
-                 classes: list,
-                 batch_size: int,
-                 model: torch.nn.Module,
-                 optimizer: torch.optim.Optimizer,
-                 C: int=1000):
+                 model,
+                 optimizer,
+                 batch_size,
+                 classes,
+                 train_dataset,
+                 test_dataset,
+                 classification_loss_fn,
+                 regression_loss_fn):
         # TODO: IMPLEMENT CUSTOM LOSS FUNCTIONS IN TRAINING LOOP
+        self.model = model
+        self.optimizer = optimizer
         self.batch_size = batch_size
+        self.classes = classes
         self.train_dataset = train_dataset
         self.test_dataset = test_dataset
         self.train_dataloader = torch.utils.data.DataLoader(self.train_dataset,
@@ -30,10 +35,8 @@ class Trainer(object):
                                                             shuffle=True)
         self.test_dataloader = torch.utils.data.DataLoader(self.test_dataset,
                                                            batch_size=self.batch_size)
-        self.classes = classes
-        self.model = model
-        self.C = C          # TODO: FIGURE THIS ONE OUT WITH THE NEW LOSS FUNCTIONS
-        self.optimizer = optimizer
+        self.classification_loss_fn = classification_loss_fn
+        self.regression_loss_fn = regression_loss_fn
 
     def train_single_epoch(self):
         self.model.train()
@@ -46,15 +49,22 @@ class Trainer(object):
             coord_tensor = coord_tensor.cuda().float()
             # print(f"{img=}")
             # print(f"{label_tensor=}")
-            # print(f"{coord_tensor=}")
+            print(f"{coord_tensor=}")
+            print(f"{coord_tensor.shape=}")
 
             out_class, out_coord = self.model(img)
-            # print(f"{out_class=}")
-            # print(f"{out_coord=}")
 
-            loss_class = torch.nn.functional.cross_entropy(out_class, label_tensor)
-            loss_coords = torch.nn.functional.l1_loss(out_coord, coord_tensor)
-            loss = loss_class + loss_coords / self.C
+            out_coord = torch.sigmoid(out_coord)
+            # print(f"{out_class=}")
+            print(f"{out_coord=}")
+            print(f"{out_coord.shape=}")
+
+            out_bbox = visualization.center_tensor_to_bbox_tensor(out_coord)
+            coord_bbox = visualization.center_tensor_to_bbox_tensor(coord_tensor)
+
+            loss_class = self.classification_loss_fn(out_class, label_tensor)
+            loss_coords = self.regression_loss_fn(out_bbox, coord_bbox)
+            loss = loss_class + loss_coords
             # print(f"{loss_class=}")
             # print(f"{loss_coords=}")
             # print(f"{loss=}")
@@ -84,9 +94,9 @@ class Trainer(object):
             # print(f"{out_class=}")
             # print(f"{out_coord=}")
 
-            loss_class = torch.nn.functional.cross_entropy(out_class, label_tensor)
-            loss_coords = torch.nn.functional.l1_loss(out_coord, coord_tensor)
-            loss = loss_class + loss_coords / self.C
+            loss_class = self.classification_loss_fn(out_class, label_tensor)
+            loss_coords = self.regression_loss_fn(out_coord, coord_tensor)
+            loss = loss_class + loss_coords
             # print(f"{loss_class=}")
             # print(f"{loss_coords=}")
             # print(f"{loss=}")
@@ -135,7 +145,9 @@ if __name__ == '__main__':
                       classes=hand_commands_dataset.label_list,
                       batch_size=2,
                       model=model,
-                      optimizer=optimizer)
+                      optimizer=optimizer,
+                      classification_loss_fn=losses["classification"][options.CLASSIFICATION_LOSS],
+                      regression_loss_fn=losses["regression"][options.REGRESSION_LOSS])
 
     train_L, test_L = trainer.train_for(20)
 

@@ -29,7 +29,6 @@ def random_bbox_tensor(B, H, W):
     return torch.stack((x_mins, y_mins, x_maxs, y_maxs), axis=-1)
 
 
-
 def center_tensor_to_bbox_tensor(coord_tensor):
     """
     This function can be used to convert a coordinate tensor, into its corresponding bounding box tensor
@@ -37,7 +36,7 @@ def center_tensor_to_bbox_tensor(coord_tensor):
     :param coord_tensor: tensor([x, y, width, height])
     :return: tensor([x_min, y_min, x_max, y_max])
     """
-    center_x, center_y, width, height = coord_tensor[:, 0], coord_tensor[:, 1], coord_tensor[:, 2], coord_tensor[:, 3]
+    center_x, center_y, width, height = coord_tensor.unbind(dim=-1)
     x_min = center_x - 0.5 * width
     x_max = center_x + 0.5 * width
     y_min = center_y - 0.5 * height
@@ -106,6 +105,9 @@ if __name__ == '__main__':
     parser.add_argument('--LABELS', type=str, nargs='+', help='list of classes')
     parser.add_argument('--TRAIN_TEST_SPLIT', type=float,
                         help='determines the proportion of data used for training vs testing')
+    parser.add_argument('--CLASSIFICATION_LOSS')
+    parser.add_argument('--REGRESSION_LOSS')
+    parser.add_argument('--DATA_PATH')
     options = parser.parse_args()
 
     custom_dataset = data_generator.HandCommandsDataset(dataset_path=path)
