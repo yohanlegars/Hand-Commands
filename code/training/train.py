@@ -1,4 +1,7 @@
+import json
 import os.path
+import uuid
+
 import configargparse
 import matplotlib.pyplot as plt
 import torch.utils.data
@@ -8,6 +11,7 @@ import code.confs.paths as paths
 from tqdm import tqdm
 from code.utils.losses import losses
 from code.utils.models_catalog import models
+from datetime import datetime
 
 # partly inspired by: https://towardsdatascience.com/bounding-box-prediction-from-scratch-using-pytorch-a8525da51ddc
 
@@ -21,7 +25,8 @@ class Trainer(object):
                  train_dataset,
                  test_dataset,
                  classification_loss_fn,
-                 regression_loss_fn):
+                 regression_loss_fn,
+                 save_path):
         self.model = model
         self.optimizer = optimizer
         self.batch_size = batch_size
@@ -35,6 +40,7 @@ class Trainer(object):
                                                            batch_size=self.batch_size)
         self.classification_loss_fn = classification_loss_fn
         self.regression_loss_fn = regression_loss_fn
+        self.save_path = save_path
 
     def train_single_epoch(self):
         self.model.train()
@@ -82,19 +88,28 @@ class Trainer(object):
         test_loss = sum_loss/total_instances_seen
         return test_loss
 
-    def train_for(self, n_epochs):
+    def train_for(self, n_epochs, save=True):
 
         train_losses = []
         test_losses = []
 
-        for i in tqdm(range(n_epochs)):
+        for epoch_idx in tqdm(range(n_epochs)):
             train_loss = self.train_single_epoch()
             test_loss = self.val_metrics()
 
             train_losses.append(train_loss)
             test_losses.append(test_loss)
 
+        if save:
+            self.save_model()
+
         return train_losses, test_losses
+
+    def save_model(self):
+
+        model_name = f"{type(self.model).__name__}_{datetime.now().strftime('%d-%m-%Y_%H-%M')}_{uuid.uuid1()}"
+
+        torch.save(self.model, os.path.join(self.save_path, model_name))
 
 
 if __name__ == '__main__':
@@ -107,9 +122,12 @@ if __name__ == '__main__':
     parser.add_argument('--MODEL', type=str, help='the model chosen for training')
     parser.add_argument('--OPTIMIZER', type=str, help='the optimizer chosen for surfing on the loss function')
     parser.add_argument('--N_EPOCHS', type=int, help='number of epochs to train for')
+    parser.add_argument('--MODELS_PATH', type=str, help='the path where the models should be saved')
 
     options = parser.parse_args()
-    print(f"{options=}")
+
+    print("Beginning Training Process with these configurations:")
+    print(json.dumps(vars(options), indent=4))
 
     hand_commands_dataset = data_generator.HandCommandsDataset(dataset_path=os.path.abspath(options.DATA_PATH))
     train_split, test_split = data_generator.generate_dataset_splits(hand_commands_dataset, options.TRAIN_TEST_SPLIT)
@@ -125,7 +143,8 @@ if __name__ == '__main__':
                       model=model,
                       optimizer=optimizer,
                       classification_loss_fn=losses["classification"][options.CLASSIFICATION_LOSS],
-                      regression_loss_fn=losses["regression"][options.REGRESSION_LOSS])
+                      regression_loss_fn=losses["regression"][options.REGRESSION_LOSS],
+                      save_path=os.path.abspath(options.MODELS_PATH))
 
     train_L, test_L = trainer.train_for(options.N_EPOCHS)
 
