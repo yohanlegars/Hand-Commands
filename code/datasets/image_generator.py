@@ -151,4 +151,4 @@ if __name__ == '__main__':
     data_generator = ImageGenerator(image_path=os.path.normpath(options.SAVE_PATH),
                                     label_list=options.LABELS,
                                     capture_arg=options.CAPTURE_ARG)
-    eval("data_generator.{}_data_generation(number_images=opt.NUMBER_IMGS)".format(options.MODE))
+    eval("data_generator.{}_data_generation(number_images=options.NUMBER_IMGS)".format(options.MODE))
