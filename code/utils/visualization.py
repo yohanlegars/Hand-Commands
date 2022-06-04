@@ -52,7 +52,8 @@ def bbox_tensor_to_center_tensor(bbox_tensor):
     :param bbox_tensor: tensor([x_min, y_min, x_max, y_max])
     :return: tensor([x, y, width, height])
     """
-    x_min, y_min, x_max, y_max = bbox_tensor[:, 0], bbox_tensor[:, 1], bbox_tensor[:, 2], bbox_tensor[:, 3]
+    # x_min, y_min, x_max, y_max = bbox_tensor[:, 0], bbox_tensor[:, 1], bbox_tensor[:, 2], bbox_tensor[:, 3]
+    x_min, y_min, x_max, y_max = bbox_tensor.unbind(dim=-1)
     center_x = (x_min + x_max) / 2
     center_y = (y_min + y_max) / 2
     width = x_max - x_min
@@ -78,7 +79,7 @@ def label_tensor_to_string(label_tensor: torch.Tensor, label_list):
     return label
 
 
-def visualize_single_instance(dataset, idx):
+def visualize_single_instance(image, coord_tensor, label_tensor, name, label_list=None):
     """
     This function can be used to render an image with corresponding ground truth coordinates and label. The instance is
     taken from a specified dataset
@@ -87,12 +88,15 @@ def visualize_single_instance(dataset, idx):
     :param idx: index of the instance, present within the provided dataset.
     :return: a tensor representation of the drawn on image. (use tensor.permute(1, 2, 0) for displaying with matplotlib)
     """
-    image, coord_tensor, label_tensor, _ = dataset.__getitem__(idx)
     coord_tensor = torch.reshape(coord_tensor, (1, -1))
     bbox = center_tensor_to_bbox_tensor(coord_tensor)
     bbox = torch.reshape(bbox, (1, -1))
-    label = label_tensor_to_string(label_tensor, dataset.label_list)
-    label = [label]
+
+    if label_list:
+        label = label_tensor_to_string(label_tensor, label_list)
+        label = [label]
+    else:
+        label = None
 
     visual = torchvision.utils.draw_bounding_boxes(image=image, boxes=bbox, labels=label, colors="red", font_size=60)
     return visual
@@ -102,8 +106,11 @@ if __name__ == '__main__':
     path = os.path.join(paths.DATA_PATH, "annotated")
 
     custom_dataset = data_generator.HandCommandsDataset(dataset_path=path)
+    label_list = custom_dataset.label_list
+
     for i in range(len(custom_dataset)):
-        image = visualize_single_instance(custom_dataset, i)
+        image, coord_tensor, label_tensor, instance_name = custom_dataset.__getitem__(i)
+        image = visualize_single_instance(image, coord_tensor, label_tensor, instance_name, label_list)
 
         plt.imshow(image.permute(1, 2, 0))
         plt.show()
