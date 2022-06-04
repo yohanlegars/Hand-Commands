@@ -1,7 +1,16 @@
+"""
+
+TODO: RANDOM CROP
+TODO: RANDOM FLIP
+TODO: RANDOM ANGLE (Maybe, if we have the time)
+
+"""
+
 import random
 import numpy as np
 import cv2
 import matplotlib.pyplot as plt
+import code.utils.visualization as visualization
 
 # modified from fast.ai
 # partly inspired by: https://towardsdatascience.com/bounding-box-prediction-from-scratch-using-pytorch-a8525da51ddc
@@ -93,3 +102,7 @@ def create_corner_rect(bb, color='red'):
 def show_corner_bb(im, bb):
     plt.imshow(im)
     plt.gca().add_patch(create_corner_rect(bb))
+
+
+if __name__ == '__main__':
+    pass
