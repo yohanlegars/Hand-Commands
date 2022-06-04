@@ -10,7 +10,10 @@ import random
 import numpy as np
 import cv2
 import matplotlib.pyplot as plt
+import os
+import code.datasets.data_generator as data_generator
 import code.utils.visualization as visualization
+import code.confs.paths as paths
 
 # modified from fast.ai
 # partly inspired by: https://towardsdatascience.com/bounding-box-prediction-from-scratch-using-pytorch-a8525da51ddc
@@ -110,8 +113,24 @@ def show_corner_bb(im, bb):
 ########################################################################################################################
 # WIP ZONE: PAUL
 
+
+
+
 ########################################################################################################################
 
 
 if __name__ == '__main__':
-    pass
+    DATA_PATH = os.path.join(paths.DATA_PATH, "annotated")
+
+    dataset = data_generator.HandCommandsDataset(dataset_path=DATA_PATH)
+
+    image, coord_tensor, label_tensor, name = dataset.__getitem__(4)
+    print(f"{image=}")
+    print(f"{image.shape=}")
+    print(f"{coord_tensor=}")
+    print(f"{coord_tensor.shape=}")
+    print(f"{dataset.get_label_list()=}")
+    print(f"{label_tensor=}")
+    print(f"{label_tensor.shape=}")
+    print(f"{name=}")
+    print("")
