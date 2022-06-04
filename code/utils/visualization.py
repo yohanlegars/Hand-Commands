@@ -114,7 +114,7 @@ def visualize_single_instance(image, coord_tensor, label_tensor, name, label_lis
 if __name__ == '__main__':
     path = os.path.join(paths.DATA_PATH, "annotated")
 
-    custom_dataset = data_generator.HandCommandsDataset(dataset_path=path)
+    custom_dataset = data_generator.HandCommandsDataset(dataset_path=path, num_augment=2)
     label_list = custom_dataset.label_list
 
     for i in range(len(custom_dataset)):

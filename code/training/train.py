@@ -35,9 +35,11 @@ class Trainer(object):
         self.test_dataset = test_dataset
         self.train_dataloader = torch.utils.data.DataLoader(self.train_dataset,
                                                             batch_size=self.batch_size,
-                                                            shuffle=True)
+                                                            shuffle=True,
+                                                            drop_last=True)
         self.test_dataloader = torch.utils.data.DataLoader(self.test_dataset,
-                                                           batch_size=self.batch_size)
+                                                           batch_size=self.batch_size,
+                                                           drop_last=True)
         self.classification_loss_fn = classification_loss_fn
         self.regression_loss_fn = regression_loss_fn
         self.save_path = save_path
@@ -123,8 +125,12 @@ if __name__ == '__main__':
     parser.add_argument('--OPTIMIZER', type=str, help='the optimizer chosen for surfing on the loss function')
     parser.add_argument('--N_EPOCHS', type=int, help='number of epochs to train for')
     parser.add_argument('--MODELS_PATH', type=str, help='the path where the models should be saved')
+    parser.add_argument('--N_AUGMENTS', type=int, help='the number of times to perform random augmentations on instances. artificially increases the size of the dataset.')
+    parser.add_argument('--BATCH_SIZE', type=int, help='the batch size')
 
-    options = parser.parse_args()
+    options, _ = parser.parse_known_args()
+
+    print(f"{options=}")
 
     print("Beginning Training Process with these configurations:")
     print(json.dumps(vars(options), indent=4))
@@ -139,7 +145,7 @@ if __name__ == '__main__':
     trainer = Trainer(train_dataset=train_split,
                       test_dataset=test_split,
                       classes=hand_commands_dataset.label_list,
-                      batch_size=2,
+                      batch_size=options.BATCH_SIZE,
                       model=model,
                       optimizer=optimizer,
                       classification_loss_fn=losses["classification"][options.CLASSIFICATION_LOSS],

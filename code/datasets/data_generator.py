@@ -3,25 +3,32 @@ import torch
 import glob
 import os
 import code.confs.paths as paths
+import code.utils.data_augment as data_augment
 import torchvision
 from PIL import Image
 
 
 class HandCommandsDataset(torch.utils.data.Dataset):
 
-    def __init__(self, dataset_path, extension="json"):
+    def __init__(self, dataset_path, num_augment=1, aug_crop_resolution=(400, 560), extension="json"):
         """
         The initialization of the dataset
 
         :param dataset_path: path wherein our label dictionaries and our training images are located. Dictionary/image pairs should have the same name (except for the file extension)
+        :param num_augment: int, number of times to perform random data augmentation on each training instance in the dataset folder. Augmentation is not perfored if this is equal to 1
+        :param aug_crop_resolution: outpout pixel resolution of random cropping augmentations, [height, width]
         :param extension: file extension used for the label dictionaries. Only "json" available for now  #TODO: potential future work: making this work with other formats
         """
         self.root_path = dataset_path
+        self.data_folder_len = len(glob.glob(os.path.join(self.root_path, "*.jpg")))
+        self.num_augment = num_augment
+        self.aug_crop_resolution = aug_crop_resolution
         self.format = extension
         self.label_list = self.get_label_list()
-        self.tensor_converter = torchvision.transforms.ToTensor()
+        self.image_converter = torchvision.transforms.Compose([torchvision.transforms.PILToTensor()])
+        # self.tensor_converter = torchvision.transforms.ToTensor()
 
-        assert self.__len__() == len(glob.glob(os.path.join(self.root_path, "*.jpg"))),\
+        assert len(glob.glob(os.path.join(self.root_path, f"*.{self.format}"))) == self.data_folder_len,\
             "Incomplete input/output pairs, check Dataset Folder:\n{}".format(self.root_path)
 
     def __getitem__(self, idx):
@@ -37,7 +44,7 @@ class HandCommandsDataset(torch.utils.data.Dataset):
               See get_label_tensor method
             - instance_name, a string, specifying the file names of the image and labels for this training instance
         """
-        annot_file = sorted(glob.glob(os.path.join(self.root_path, "*." + self.format)))[idx]
+        annot_file = sorted(glob.glob(os.path.join(self.root_path, "*." + self.format)))[idx % self.data_folder_len]
         image_file = annot_file.split(".")[0] + ".jpg"
         with open(annot_file) as f:
             annot_dict = json.load(f)
@@ -47,12 +54,15 @@ class HandCommandsDataset(torch.utils.data.Dataset):
         coord_tensor = self.get_coord_tensor(annot_dict[0]["annotations"][0]["coordinates"])
 
         img = Image.open(image_file)
-        transform = torchvision.transforms.Compose([torchvision.transforms.PILToTensor()])
-        img = transform(img)
+        img = self.image_converter(img)
+
+        if self.num_augment != 1:
+            img, coord_tensor, label_tensor, instance_name = data_augment.random_augment(img, coord_tensor, label_tensor, instance_name, cropped_img_resolution=self.aug_crop_resolution)
+
         return img, coord_tensor, label_tensor, instance_name
 
     def __len__(self):
-        return len(glob.glob(os.path.join(self.root_path, "*." + self.format)))
+        return self.data_folder_len * self.num_augment
 
     def get_coord_tensor(self, coords: dict):
         """
@@ -108,7 +118,7 @@ if __name__ == '__main__':
 
     DATA_PATH = os.path.join(paths.DATA_PATH, "annotated")
 
-    dataset = HandCommandsDataset(dataset_path=DATA_PATH)
+    dataset = HandCommandsDataset(dataset_path=DATA_PATH, num_augment=5)
 
     # for index in range(len(dataset)):
     #     image, coord_tensor, label_tensor, name = dataset.__getitem__(index)
@@ -131,3 +141,4 @@ if __name__ == '__main__':
     print(f"{label_tensor.shape=}")
     print(f"{name=}")
     print("")
+    print(f"{len(dataset)=}")
