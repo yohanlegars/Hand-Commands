@@ -1,51 +1,52 @@
-"""
-
-TODO: RANDOM FLIP
-TODO: RANDOM ANGLE (Maybe, if we have the time)
-
-"""
-
 import random
-import numpy as np
-import cv2
 import matplotlib.pyplot as plt
 import os
+import torchvision.transforms.functional
 import code.datasets.data_generator as data_generator
 import code.utils.visualization as visualization
 import code.confs.paths as paths
 import torch
-import torchvision.transforms as T
 
-########################################################################################################################
-# WIP ZONE: YOHAN
+def random_hflip(image, coord_tensor, label_tensor, name, flip_ratio=0.5):
+    """
+    This function performs a random horizontal flip of the image and its corresponding labels
 
+    :param image: image tensor
+    :param coord_tensor: coordinate tensor
+    :param label_tensor: label tensor
+    :param name: training instance name
+    :return: a new training instance
+    """
+    flip = random.choices(population=(True, False), weights=(flip_ratio, 1-flip_ratio))[0]
 
-
-
-def Random_Horizontal_Flip(dataset, num):
-    image, coord_tensor, label_tensor, _ = dataset.__getitem__(num)
-    k = random.randint(0,1)
-    p = 1
-
-    if k == 1:
-        transform = T.RandomHorizontalFlip(p)
-        image_aug = transform(image)
+    if flip:
+        image_aug = torchvision.transforms.functional.hflip(image)
         coord_tensor[0] = image.shape[2] - coord_tensor[0]
         if label_tensor[2] == 1.:
             label_tensor = torch.Tensor([0., 0, 0., 1., 0.])
 
         elif label_tensor[3] == 1.:
             label_tensor = torch.Tensor([0., 0., 1., 0., 0.])
+
+        name += "_flip"
+
     else:
         image_aug = image
 
-    return image_aug, image, coord_tensor, label_tensor
+    return image_aug, coord_tensor, label_tensor, name
 
-
-########################################################################################################################
-# WIP ZONE: PAUL
 
 def crop(img_tensor, coord_tensor, label_tensor, instance_name, crop_coords):
+    """
+    This function crops the image and modifies its label coordinates accordingly
+
+    :param img_tensor: image tensor
+    :param coord_tensor: coordinate tensor
+    :param label_tensor: label tensor
+    :param instance_name: training instance name
+    :param crop_coords: coordinates of the cropping, int, specified as: [x left corner, y top corner, pixel width, pixel height]
+    :return:
+    """
 
     x_left, y_top, width, height = crop_coords
 
@@ -58,9 +59,18 @@ def crop(img_tensor, coord_tensor, label_tensor, instance_name, crop_coords):
 
     return img_tensor, coord_tensor, label_tensor, instance_name
 
-def random_crop(img_tensor, coord_tensor, label_tensor, instance_name, cropped_img_resolution):
 
-    # cropped_img_resolution shape [H, W]
+def random_crop(img_tensor, coord_tensor, label_tensor, instance_name, cropped_img_resolution):
+    """
+    This function performs a random crop of the image and its labels, forcing a specific output image resolution
+
+    :param img_tensor: image tensor
+    :param coord_tensor: coordinate tensor
+    :param label_tensor: label tensor
+    :param instance_name: training instance name
+    :param cropped_img_resolution: tuple of 2 ints: [pixel height, pixel width]
+    :return:
+    """
     x_range = img_tensor.shape[2] - cropped_img_resolution[1]
     y_range = img_tensor.shape[1] - cropped_img_resolution[0]
     x_left = random.randrange(x_range)
@@ -72,23 +82,35 @@ def random_crop(img_tensor, coord_tensor, label_tensor, instance_name, cropped_i
 
     return crop(img_tensor, coord_tensor, label_tensor, instance_name, crop_coords)
 
-def rotate(img_tensor, coord_tensor, label_tensor, instance_name, angle):
+
+def rotate(img_tensor, coord_tensor, label_tensor, instance_name, angle):   #TODO
     pass
 
-def random_rotate():
+
+def random_rotate():        #TODO
     pass
 
-########################################################################################################################
+
+def random_augment(img_tensor, coord_tensor, label_tensor, instance_name, cropped_img_resolution):
+    """
+    This function performs a random data augmentation on one training instance.
+    It sequentially applies a random cropping and a random flip of the image.
+
+    :return: a new, augmented, training instance
+    """
+    img_tensor, coord_tensor, label_tensor, instance_name = random_crop(img_tensor, coord_tensor, label_tensor, instance_name, cropped_img_resolution)
+    img_tensor, coord_tensor, label_tensor, instance_name = random_hflip(img_tensor, coord_tensor, label_tensor, instance_name)
+
+    return img_tensor, coord_tensor, label_tensor, instance_name
 
 
 if __name__ == '__main__':
     DATA_PATH = os.path.join(paths.DATA_PATH, "annotated")
 
     dataset = data_generator.HandCommandsDataset(dataset_path=DATA_PATH)
-    #crop_resolution = (300, 400)
+    crop_resolution = (430, 590)
 
-
-    image, coord_tensor, label_tensor, name = dataset.__getitem__(4)
+    image, coord_tensor, label_tensor, name = dataset.__getitem__(25)
     print(f"{image=}")
     print(f"{image.shape=}")
     print(f"{coord_tensor=}")
@@ -97,27 +119,16 @@ if __name__ == '__main__':
     print(f"{label_tensor=}")
     print(f"{label_tensor.shape=}")
     print(f"{name=}")
-   # print(f"{crop_resolution=}")
+    print(f"{crop_resolution=}")
     print("")
 
-    num = 2
-    image_aug, image, coord_tensor, label_tensor = Random_Horizontal_Flip(dataset, num)
-    images = [image_aug, image]
-    for i in range(0,len(images)):
-        plt.imshow(images[i].permute(1,2,0))
-        plt.show()
+    orig_img = visualization.visualize_single_instance(image, coord_tensor, label_tensor, name, dataset.label_list)
+    plt.figure(name)
+    plt.imshow(orig_img.permute(1, 2, 0))
 
+    image, coord_tensor, label_tensor, name = random_augment(image, coord_tensor, label_tensor, name, crop_resolution)
 
-
-
-    # orig_img = visualization.visualize_single_instance(image, coord_tensor, label_tensor, name, dataset.label_list)
-    # plt.figure(name)
-    # plt.imshow(orig_img.permute(1, 2, 0))
-    #
-    # image, coord_tensor, label_tensor, name = random_crop(image, coord_tensor, label_tensor, name, crop_resolution)
-    #
-    # crop_img = visualization.visualize_single_instance(image, coord_tensor, label_tensor, name, dataset.label_list)
-    # plt.figure(name)
-    # plt.imshow(crop_img.permute(1, 2, 0))
-    # plt.show()
-
+    mod_img = visualization.visualize_single_instance(image, coord_tensor, label_tensor, name, dataset.label_list)
+    plt.figure(name)
+    plt.imshow(mod_img.permute(1, 2, 0))
+    plt.show()

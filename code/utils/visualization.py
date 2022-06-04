@@ -4,6 +4,7 @@ import code.datasets.data_generator as data_generator
 import code.confs.paths as paths
 import os
 import matplotlib.pyplot as plt
+from PIL import ImageDraw
 import configargparse
 
 
@@ -99,6 +100,14 @@ def visualize_single_instance(image, coord_tensor, label_tensor, name, label_lis
         label = None
 
     visual = torchvision.utils.draw_bounding_boxes(image=image, boxes=bbox, labels=label, colors="red", font_size=60)
+
+    transform = torchvision.transforms.Compose([torchvision.transforms.ToPILImage()])
+    visual = transform(visual)
+    draw = ImageDraw.Draw(visual)
+    draw.text((0,0), name, (0, 255, 0))
+    transform = torchvision.transforms.Compose([torchvision.transforms.PILToTensor()])
+    visual = transform(visual)
+
     return visual
 
 
