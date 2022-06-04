@@ -11,6 +11,7 @@ from yaml import parse
 CONFIG_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, "utils"))
 sys.path.append(CONFIG_PATH)
 from util import predict_transform
+import code.confs.paths as paths
 
 
 """
@@ -88,7 +89,7 @@ def create_modules(blocks):
             filters = int(x["filters"])
             padding = int(x["pad"])
             kernel_size = int(x["stride"])
-            stride = int(["stride"])
+            stride = int(x["stride"])
 
             if padding:
                 pad = (kernel_size -1) // 2
@@ -166,73 +167,78 @@ def create_modules(blocks):
 
 
 
+if __name__ == '__main__':
 
+    the_path = os.path.join(paths.CONFS_PATH, "yolov3.cfg")
+    blocks = parse_cfg(the_path)
+    net_info, module_list = create_modules(blocks)
+    print(net_info)
 
-class Darknet(nn.Module):
-    def __init__(self):
-        super(Darknet,self).__init__()
-
-        super(Darknet, self).__init__()
-        self.blocks = parse_cfg(confile)
-        self.net_info, self.module_list = create_modules(self.blocks)
-
-        def forward(self, x, CUDA):
-            modules = self.blocks[1:]
-            outputs = {}  #we cache the outputs for the route layers
-
-            write = 0
-            for i, module in enumerate(modules):
-                module_type = (module["type"])
-
-                if module_type == "convolutional" or module_type == "upsample":
-                    x = self.module_list[i](x)
-
-                elif module_type == "route":
-                    layers = module["layers"]
-                    layers = [int(a) for a in layers]
-
-                    if (layers[0]) > 0:
-                        layers[0] = layers[0] - i
-
-                    if len(layers) == 1:
-                        x = outputs[i + (layers[0])]
-                    
-                    else:
-                        if (layers[1]) > 0:
-                            layers[1] = layers[1] - i
-
-                        map1 = outputs[i + layers[0]]
-                        map2 = outputs[i + layers[1]]
-                        x = torch.cat((map1, map2), 1)
-
-                elif module_type == "shortcut":
-                    from_ = int(module["from"])
-                    x = outputs[i-1] + outputs[i+from_]
-
-                elif module_type == 'yolo':
-                    anchors = self.module_list[i][0].anchors
-                    #get the input dimensions
-                    inp_dim = int(self.net_info["height"])
-
-                    #get the number of classes
-                    num_classes = int(module["classes"])
-
-                    #Transform
-                    x = x.data
-                    x = predict_transform(x, inp_dim, anchors, num_classes, CUDA)
-                    if not write:
-                        detections = x
-                        write = 1
-                    
-                    else:
-                        detections = torch.cat((detections,x), 1)
-                
-                outputs[i] = x
-
-            return detections
-
-
-                    
+# class Darknet(nn.Module):
+#     def __init__(self):
+#         super(Darknet,self).__init__()
+#
+#         super(Darknet, self).__init__()
+#         self.blocks = parse_cfg(confile)
+#         self.net_info, self.module_list = create_modules(self.blocks)
+#
+#         def forward(self, x, CUDA):
+#             modules = self.blocks[1:]
+#             outputs = {}  #we cache the outputs for the route layers
+#
+#             write = 0
+#             for i, module in enumerate(modules):
+#                 module_type = (module["type"])
+#
+#                 if module_type == "convolutional" or module_type == "upsample":
+#                     x = self.module_list[i](x)
+#
+#                 elif module_type == "route":
+#                     layers = module["layers"]
+#                     layers = [int(a) for a in layers]
+#
+#                     if (layers[0]) > 0:
+#                         layers[0] = layers[0] - i
+#
+#                     if len(layers) == 1:
+#                         x = outputs[i + (layers[0])]
+#
+#                     else:
+#                         if (layers[1]) > 0:
+#                             layers[1] = layers[1] - i
+#
+#                         map1 = outputs[i + layers[0]]
+#                         map2 = outputs[i + layers[1]]
+#                         x = torch.cat((map1, map2), 1)
+#
+#                 elif module_type == "shortcut":
+#                     from_ = int(module["from"])
+#                     x = outputs[i-1] + outputs[i+from_]
+#
+#                 elif module_type == 'yolo':
+#                     anchors = self.module_list[i][0].anchors
+#                     #get the input dimensions
+#                     inp_dim = int(self.net_info["height"])
+#
+#                     #get the number of classes
+#                     num_classes = int(module["classes"])
+#
+#                     #Transform
+#                     x = x.data
+#                     x = predict_transform(x, inp_dim, anchors, num_classes, CUDA)
+#                     if not write:
+#                         detections = x
+#                         write = 1
+#
+#                     else:
+#                         detections = torch.cat((detections,x), 1)
+#
+#                 outputs[i] = x
+#
+#             return detections
+#
+#
+#
 
 
 
