@@ -11,9 +11,13 @@ import numpy as np
 import cv2
 import matplotlib.pyplot as plt
 import os
+
+import torch
+
 import code.datasets.data_generator as data_generator
 import code.utils.visualization as visualization
 import code.confs.paths as paths
+import torchvision.transforms as T
 
 # modified from fast.ai
 # partly inspired by: https://towardsdatascience.com/bounding-box-prediction-from-scratch-using-pytorch-a8525da51ddc
@@ -110,6 +114,42 @@ def show_corner_bb(im, bb):
 ########################################################################################################################
 # WIP ZONE: YOHAN
 
+class RandomHorizontalFlip(torch.nn.Module):
+    """
+    Horizontally flip the given image randomly with a given probability.
+    Args:
+        p (float): probability of the image being flipped. Default  value is 0.5
+    """
+    def __init__(self, p=1):
+        super().__init__()
+        self.p = p
+
+    def forward(self, dataset, num):
+        image, coord_tensor, label_tensor, _ = dataset.__getitem__(num)
+        transform = T.RandomHorizontalFlip(self.p)
+        image_aug = transform(image)
+        if image_aug != image:
+            coord_tensor[0] = image.shape[2] - coord_tensor[0]
+            if label_tensor == torch.Tensor([0., 0., 1., 0., 0.]):
+                label_tensor = torch.Tensor([0., 0, 0., 1., 0.])
+
+            elif label_tensor == torch.Tensor([0., 0., 0., 1., 0.]):
+                label_tensor = torch.Tensor([0., 0., 1., 0., 0.])
+
+            else:
+                label_tensor = label_tensor
+
+        return image_aug, image, coord_tensor, label_tensor
+
+
+
+
+
+
+
+
+
+
 ########################################################################################################################
 # WIP ZONE: PAUL
 
@@ -123,8 +163,11 @@ if __name__ == '__main__':
     DATA_PATH = os.path.join(paths.DATA_PATH, "annotated")
 
     dataset = data_generator.HandCommandsDataset(dataset_path=DATA_PATH)
+    #image, coord_tensor, label_tensor, name = dataset.__getitem__(4)
+    num = 2
+    aug = RandomHorizontalFlip()
+    image_aug, image, coord_tensor, label_tensor = aug.forward(dataset, num)
 
-    image, coord_tensor, label_tensor, name = dataset.__getitem__(4)
     print(f"{image=}")
     print(f"{image.shape=}")
     print(f"{coord_tensor=}")
@@ -132,5 +175,8 @@ if __name__ == '__main__':
     print(f"{dataset.get_label_list()=}")
     print(f"{label_tensor=}")
     print(f"{label_tensor.shape=}")
-    print(f"{name=}")
-    print("")
+    #print(f"{name=}")
+    plt.imshow(image.permute(1, 2, 0))
+    plt.show()
+    plt.imshow(image_aug.permute(1,2,0))
+    plt.show()
