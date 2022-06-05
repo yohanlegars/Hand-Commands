@@ -127,6 +127,7 @@ if __name__ == '__main__':
     parser.add_argument('--MODELS_PATH', type=str, help='the path where the models should be saved')
     parser.add_argument('--N_AUGMENTS', type=int, help='the number of times to perform random augmentations on instances. artificially increases the size of the dataset.')
     parser.add_argument('--BATCH_SIZE', type=int, help='the batch size')
+    parser.add_argument('--CONF', default=, help='the batch size')
 
     options, _ = parser.parse_known_args()
 
