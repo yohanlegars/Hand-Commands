@@ -116,7 +116,7 @@ class Trainer(object):
 
 if __name__ == '__main__':
 
-    parser = configargparse.ArgumentParser(default_config_files=[os.path.join(paths.CONFS_PATH, "training.conf")])
+    parser = configargparse.ArgumentParser(default_config_files=[os.path.join(paths.CONFS_PATH, "config_templates/training.conf")])
     parser.add_argument('--TRAIN_TEST_SPLIT', type=float, help='determines the proportion of data used for training vs testing')
     parser.add_argument('--CLASSIFICATION_LOSS', type=str, help='determines the type of classification loss function used for training')
     parser.add_argument('--REGRESSION_LOSS', type=str, help='determines the type of regression loss function used for training')
@@ -127,7 +127,7 @@ if __name__ == '__main__':
     parser.add_argument('--MODELS_PATH', type=str, help='the path where the models should be saved')
     parser.add_argument('--N_AUGMENTS', type=int, help='the number of times to perform random augmentations on instances. artificially increases the size of the dataset.')
     parser.add_argument('--BATCH_SIZE', type=int, help='the batch size')
-    parser.add_argument('--CONF', default=, help='the batch size')
+    # parser.add_argument('--CONF',type=str, default='./confs/training.conf')
 
     options, _ = parser.parse_known_args()
 
