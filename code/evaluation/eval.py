@@ -3,6 +3,7 @@ import cv2
 import matplotlib.pyplot as plt
 import torch
 import code.models.resnet34 as resnet34
+import code.models.darknet as yolov3
 import code.confs.paths as paths
 import code.utils.visualization as visualization
 
@@ -57,15 +58,18 @@ class RealTimePredictor:
 
 if __name__ == '__main__':
 
-    model_name = "BB_model_04-06-2022_17-29_251b1e9a-e41b-11ec-9882-312d0a010c77"
-    path = os.path.join(paths.ROOT_PATH, "saved_models", model_name)
+    #model_name = "BB_model_04-06-2022_17-29_251b1e9a-e41b-11ec-9882-312d0a010c77"
+    #path = os.path.join(paths.ROOT_PATH, "saved_models", model_name)
+    model = yolov3.Darknet()
+    model.load_weights()
 
-    print(path)
-    print(os.path.isfile(path))
 
-    model = resnet34.BB_model()
-    model.load_state_dict(torch.load(path))
+    # print(path)
+    # print(os.path.isfile(path))
+    #
+    # model = resnet34.BB_model()
+    # model.load_state_dict(torch.load(path))
     model.eval()
 
-    predictor = RealTimePredictor(model=model, capture_arg=0)
-    predictor.film_me()
+    # predictor = RealTimePredictor(model=model, capture_arg=0)
+    # predictor.film_me()

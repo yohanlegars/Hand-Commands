@@ -327,6 +327,8 @@ if __name__ == '__main__':
     model = Darknet()
     model.load_weights()
 
+    #model.eval()
+
 
 
 
