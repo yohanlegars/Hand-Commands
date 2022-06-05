@@ -118,7 +118,7 @@ if __name__ == '__main__':
 
     DATA_PATH = os.path.join(paths.DATA_PATH, "annotated")
 
-    dataset = HandCommandsDataset(dataset_path=DATA_PATH, num_augment=5)
+    dataset = HandCommandsDataset(dataset_path=DATA_PATH, num_augment=1)
 
     # for index in range(len(dataset)):
     #     image, coord_tensor, label_tensor, name = dataset.__getitem__(index)

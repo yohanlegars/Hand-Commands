@@ -111,7 +111,7 @@ class Trainer(object):
 
         model_name = f"{type(self.model).__name__}_{datetime.now().strftime('%d-%m-%Y_%H-%M')}_{uuid.uuid1()}"
 
-        torch.save(self.model, os.path.join(self.save_path, model_name))
+        torch.save(self.model.state_dict(), os.path.join(self.save_path, model_name))
 
 
 if __name__ == '__main__':

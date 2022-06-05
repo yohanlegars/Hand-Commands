@@ -9,7 +9,7 @@ import code.confs.paths as paths
 class ImageGenerator(object):
     def __init__(self, image_path, label_list, capture_arg=0):
         """
-        The constructor of the Data Generator.
+        The constructor of the Image Generator.
 
         :param image_path: the path where the images should be saved, str
         :param label_list: the list of labels to create images for

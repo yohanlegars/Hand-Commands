@@ -23,7 +23,7 @@ def random_hflip(image, coord_tensor, label_tensor, name, flip_ratio=0.5):
         image_aug = torchvision.transforms.functional.hflip(image)
         coord_tensor[0] = image.shape[2] - coord_tensor[0]
         if label_tensor[2] == 1.:
-            label_tensor = torch.Tensor([0., 0, 0., 1., 0.])
+            label_tensor = torch.Tensor([0., 0., 0., 1., 0.])
 
         elif label_tensor[3] == 1.:
             label_tensor = torch.Tensor([0., 0., 1., 0., 0.])
