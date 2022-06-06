@@ -4,3 +4,4 @@ code/confs/image_capture.conf
 code/confs/training.conf
 *__pycache__
 code/confs/yolov3.weights
+code/confs/config_templates/training.conf
