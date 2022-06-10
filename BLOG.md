@@ -13,12 +13,12 @@ Yohan Le Gars
  
 The dataset consists of five different signs: "stop", "forward", "backward", "left" and "right". 
 
-<p float="left">
-  <img src="https://github.com/yohanlegars/Hand-Commands/blob/main/blog_images/matti_comp.jpg" width="100" height="400"/>
-  <img src="https://github.com/yohanlegars/Hand-Commands/blob/main/blog_images/yohan_comp_1_min.jpg" width="100" height="400"/> 
-  <img src="https://github.com/yohanlegars/Hand-Commands/blob/main/blog_images/yohan_comp_2-min.jpg" width="100" height="400"/>
-  <img src="https://github.com/yohanlegars/Hand-Commands/blob/main/blog_images/paul_comp_1_min.jpg" width="100" height="400"/>
-  <img src="https://github.com/yohanlegars/Hand-Commands/blob/main/blog_images/paul_comp_2-min.jpg" width="100" height="400"/>
+<align="middle">
+  <img src="https://github.com/yohanlegars/Hand-Commands/blob/main/blog_images/matti_comp.jpg" width="100" height="250"/>
+  <img src="https://github.com/yohanlegars/Hand-Commands/blob/main/blog_images/yohan_comp_1_min.jpg" width="100" height="250"/> 
+  <img src="https://github.com/yohanlegars/Hand-Commands/blob/main/blog_images/yohan_comp_2-min.jpg" width="100" height="250"/>
+  <img src="https://github.com/yohanlegars/Hand-Commands/blob/main/blog_images/paul_comp_1_min.jpg" width="100" height="250"/>
+  <img src="https://github.com/yohanlegars/Hand-Commands/blob/main/blog_images/paul_comp_2-min.jpg" width="100" height="250"/>
 </p>
 
 
