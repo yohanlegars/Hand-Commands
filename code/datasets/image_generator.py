@@ -4,6 +4,7 @@ import time
 import uuid
 import configargparse
 import code.confs.paths as paths
+from tqdm import tqdm
 
 
 class ImageGenerator(object):
@@ -20,7 +21,7 @@ class ImageGenerator(object):
         self.labels = label_list
         self.capture = cv2.VideoCapture(capture_arg)
 
-    def timed_data_generation(self, number_images, headsup_time=3, timer=3):
+    def timed_data_generation(self, number_images, headsup_time=5, timer=3):
         """
         This method takes snapshots of the webcam on a regular timer. The images are directly saved into the
         specified image_path of the class.
@@ -56,7 +57,7 @@ class ImageGenerator(object):
 
         for label in self.labels:
             print("Now Collecting images for label {}".format(label))
-            for img_count in range(number_images):
+            for img_count in tqdm(range(number_images)):
                 img_name = '{}_{}.jpg'.format(label, str(uuid.uuid1()))
                 current_time = time.time()
                 while time.time() < current_time + timer:
