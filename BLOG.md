@@ -13,6 +13,8 @@ Yohan Le Gars
  
 The dataset consists of five different signs: "stop", "forward", "backward", "left" and "right". 
 
+![alt text](https://github.com/yohanlegars/Hand-Commands/blob/main/blog_images/matti_comp.jpg)
+
 
 [//]: # (WIP ZONE: PAUL ///////////////////////////////////////////////////////////////////)
 
