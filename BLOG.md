@@ -11,17 +11,18 @@ Yohan Le Gars
   
 ## The Signs
  
-The dataset consists of five different signs: "stop", "forward", "backward", "left" and "right". The images can be seen below:
+The dataset consists of five different signs: "forward", "backward", "left" and "right","stop". The images can be seen below:
 
 <p align="middle">
-  <img src="blog_images/matti_comp.jpg" width="100" height="210"/>
-  <img src="blog_images/yohan_comp_1_min.jpg" width="100" height="210"/> 
-  <img src="blog_images/yohan_comp_2-min.jpg" width="100" height="210"/>
-  <img src="blog_images/paul_comp_1_min.jpg" width="100" height="210"/>
-  <img src="blog_images/paul_comp_2-min.jpg" width="100" height="210"/>
+  <img src="blog_images/matti_comp.jpg" width="100" height="180"/>
+  <img src="blog_images/yohan_comp_1_min.jpg" width="100" height="180"/> 
+  <img src="blog_images/yohan_comp_2-min.jpg" width="100" height="180"/>
+  <img src="blog_images/paul_comp_1_min.jpg" width="100" height="180"/>
+  <img src="blog_images/paul_comp_2-min.jpg" width="100" height="180"/>
 </p>
 
-
+## The Model
+We started implementing the YOLOv3 model from scratch but due to time constraints decided to use the model from ultralytics. 
 
 
 
