@@ -21,9 +21,6 @@ The dataset consists of five different signs: "forward", "backward", "left" and 
   <img src="blog_images/paul_comp_2-min.jpg" width="100" height="180"/>
 </p>
 
-## The Model
-We started implementing the YOLOv3 model from scratch but due to time constraints decided to use the model from ultralytics. 
-
 
 
 [//]: # (WIP ZONE: PAUL ///////////////////////////////////////////////////////////////////)
@@ -69,3 +66,12 @@ For our project, the hand sign / class label correspondences are as follows:
 | stop      | 4     |
 
 For the bounding box, each of the dimensions are normalized with respect to the input image resolution.
+
+
+## The Model
+
+Our initial attempt at an architecture was a reproduction from scratch of the [YOLOv3 model](https://pjreddie.com/media/files/papers/YOLOv3.pdf). This process did unfortunately not fare the way we initially hoped to follow. Complications in implementing the architecture from scratch made it difficult to obtain a working, self-made version of the model. Those manifested themselves mostly in lack of coordination in the creation of the several components of the process: building everything from scratch requires precise coordination between how the architecture is built, how its training loop is built, and how the dataset extraction process is conducted. We arrived at a stage where a training loop and dataset classes were fully implemented and ready, using Pytorch. However, the dataset class does not prepare label tensors in the format that is accepted by YOLO. Although fixing this issue was no concern in terms of our capabilities, heavy time constraints related to the schedule imposed for the project led us to abandon this route, and work using a [YOLOv5 model provided by ultralytics](https://github.com/ultralytics/yolov5). With the benefit of hindsight, a lot could have been done differently with respect to this design process, which would have permitted the success of creation of our own version of a YOLO architecture.
+
+### YOLOv5
+
+
