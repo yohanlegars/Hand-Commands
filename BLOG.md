@@ -79,8 +79,22 @@ YOLOv5 is the latest iteration of the YOLO architecture. At its core, the YOLO a
 The key idea behind the architecture is to divide input images into an *SxS* grid of cells: for example, with *S=7*:
 
 <p align="middle">
-  <img src="blog_images/comp_vis_label.png"/>
+  <img src="blog_images/yolo_grid.png"/>
 </p>
 
+Each cell is taking care of making a pre-specified number *B* of bounding box predictions (with 4 arguments, indicating the center position and dimensions of the box). Each bounding box prediction is accompanied with a *confidence score*; *P<sub>c</sub>*. Each bounding box is therefore fully specified as a vector [*P<sub>c</sub>*, *x*, *y*, *w*, *h*]. Additionally, cells are also estimating conditional class probabilities for every label the model is being trained on. Those probabilities can be interpreted as "the probability that an object of a given class *C<sub>i</sub>* is present inside the cell, if it is admitted that an object *is* indeed present in the cell".
+The output of a prediction made by YOLO on an input image has a total of:
 
+*SxSx(Bx5+C)*
+
+where *S* is the number of cells along each dimension, *B* is the number of bounding box predictions per cell, and *C* is the number of classes.
+Training instances must also be of the same format: the information contained within the label files (as shown in the previous section) are therefore formatted in that way.
+
+The architecture that takes care of converting an input image into a prediction tensor can be seen here:
+
+<p align="middle">
+  <img src="blog_images/architecture.png"/>
+</p>
+
+Let it be noted that this schematic of the architecture is taken from the [original article](https://arxiv.org/abs/1506.02640) of the first version of YOLO. Continuous improvements on YOLO have led to a number of improvements and 
 
