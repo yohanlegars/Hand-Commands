@@ -53,7 +53,12 @@ Sampling images is made quick and easy, while the script is running, visual feed
 
 Sampling images is not the only part of the dataset creation process. If we want to be able to perform nice predictions, we also want the labels corresponding to our sampled images. For our task, the labels are the sign type [REFER TO SIGN TYPE SECTION HERE], and the location of the sign in the image.
 
-This process can be automated using the 
+This is definitely the most time-consuming part of the dataset creation. Each image must be individually provided with its own label and coordinates for the sign. Nevertheless, it is possible to make the process efficient, to a reasonable extent. For this, we initially used the annotation program [labelImg](https://github.com/tzutalin/labelImg), which provides ample functionalities. However, building a dataset with multiple contributors requires an easy way to pool each team member's generated data and annotations in a common place. As a result, we ended up choosing [an online platform](https://roboflow.com/) to facilitate our work within the team. This is by no means required, and if you were to choose to work on your own on a custom dataset, we would recommend to use the labelImg program.
+
+In the end, each image is provided with its own annotation file, which looks like this:
+
+
+
 
 
 
