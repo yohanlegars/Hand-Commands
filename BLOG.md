@@ -11,7 +11,7 @@ Yohan Le Gars
   
 ## The Signs
  
-The dataset consists of five different signs: "stop", "forward", "backward", "left" and "right". 
+The dataset consists of five different signs: "stop", "forward", "backward", "left" and "right". The images can be seen below:
 
 <p align="middle">
   <img src="https://github.com/yohanlegars/Hand-Commands/blob/main/blog_images/matti_comp.jpg" width="100" height="210"/>
@@ -21,11 +21,7 @@ The dataset consists of five different signs: "stop", "forward", "backward", "le
   <img src="https://github.com/yohanlegars/Hand-Commands/blob/main/blog_images/paul_comp_2-min.jpg" width="100" height="210"/>
 </p>
 
-<p align="center">
-  <img alt="Light" src="https://github.com/yohanlegars/Hand-Commands/blob/main/blog_images/matti_comp.jpg" width="45%">
-&nbsp; &nbsp; &nbsp; &nbsp;
-  <img alt="Dark" src=src="https://github.com/yohanlegars/Hand-Commands/blob/main/blog_images/yohan_comp_1_min.jpg" width="45%">
-</p>
+
 
 
 
