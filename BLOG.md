@@ -74,4 +74,13 @@ Our initial attempt at an architecture was a reproduction from scratch of the [Y
 
 ### YOLOv5
 
+YOLOv5 is the latest iteration of the YOLO architecture. At its core, the YOLO architecture is a single stage object detection module. It is fast enough to permit real time use with video, and has remained within the state of the art for the object detection task since [it was first introduced in 2015](https://arxiv.org/abs/1506.02640).
+
+The key idea behind the architecture is to divide input images into an *SxS* grid of cells: for example, with *S=7*:
+
+<p align="middle">
+  <img src="blog_images/comp_vis_label.png"/>
+</p>
+
+
 
