@@ -53,8 +53,18 @@ This is definitely the most time-consuming part of the dataset creation. Each im
 
 In the end, each image is provided with its own annotation file, which looks like this:
 
+<p align="middle">
+  <img src="blog_images/comp_vis_label.png"/>
+</p>
 
+For our project, the hand sign / class label correspondences are as follows:
 
+| Hand Sign | Label |
+|-----------|-------|
+| backward  | 0     |
+| forward   | 1     |
+| left      | 2     |
+| right     | 3     |
+| stop      | 4     |
 
-
-
+For the bounding box, each of the dimensions are normalized with respect to the input image resolution.
