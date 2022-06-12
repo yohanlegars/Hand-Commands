@@ -72,7 +72,7 @@ For the bounding box, each of the dimensions are normalized with respect to the 
 
 Our initial attempt at an architecture was a reproduction from scratch of the [YOLOv3 model](https://pjreddie.com/media/files/papers/YOLOv3.pdf). This process did unfortunately not fare the way we initially hoped to follow. Complications in implementing the architecture from scratch made it difficult to obtain a working, self-made version of the model. Those manifested themselves mostly in lack of coordination in the creation of the several components of the process: building everything from scratch requires precise coordination between how the architecture is built, how its training loop is built, and how the dataset extraction process is conducted. We arrived at a stage where a training loop and dataset classes were fully implemented and ready, using Pytorch. However, the dataset class does not prepare label tensors in the format that is accepted by YOLO. Although fixing this issue was no concern in terms of our capabilities, heavy time constraints related to the schedule imposed for the project led us to abandon this route, and work using a [YOLOv5 model provided by ultralytics](https://github.com/ultralytics/yolov5). With the benefit of hindsight, a lot could have been done differently with respect to this design process, which would have permitted the success of creation of our own version of a YOLO architecture.
 
-### YOLOv5
+### YOLO
 
 YOLOv5 is the latest iteration of the YOLO architecture. At its core, the YOLO architecture is a single stage object detection module. It is fast enough to permit real time use with video, and has remained within the state of the art for the object detection task since [it was first introduced in 2015](https://arxiv.org/abs/1506.02640).
 
@@ -83,20 +83,25 @@ The key idea behind the architecture is to divide input images into an *SxS* gri
 </p>
 
 Each cell is taking care of making a pre-specified number *B* of bounding box predictions (with 4 arguments, indicating the center position and dimensions of the box). Each bounding box prediction is accompanied with a *confidence score*; *P<sub>c</sub>*. Each bounding box is therefore fully specified as a vector [*P<sub>c</sub>*, *x*, *y*, *w*, *h*]. Additionally, cells are also estimating conditional class probabilities for every label the model is being trained on. Those probabilities can be interpreted as "the probability that an object of a given class *C<sub>i</sub>* is present inside the cell, if it is admitted that an object *is* indeed present in the cell".
-The output of a prediction made by YOLO on an input image has a total of:
+The output of a prediction made by YOLO on an input image has a total of *SxSx(Bx5+C)* dimensions. In the case that each cell is assigned 3 box predictions to make, and there are 5 distinct classes, each cell produces a prediction tensor of the format:
 
-*SxSx(Bx5+C)*
+<p align="middle">
+  <img src="blog_images/predict_tensor.gif"/>
+</p>
 
 where *S* is the number of cells along each dimension, *B* is the number of bounding box predictions per cell, and *C* is the number of classes.
-Training instances must also be of the same format: the information contained within the label files (as shown in the previous section) are therefore formatted in that way.
+Training instances must also be of the same format: the information contained within the label files (as shown in the previous section) are therefore formatted in that way (conditional class probabilities and confidence scores are set to 1, or 0, since the manually labelled images do contain that information with certainty).
 
 The architecture that takes care of converting an input image into a prediction tensor can be seen here:
 
 <p align="middle">
-  <img src="blog_images/architecture.png"/>
+  <img src="blog_images/architecture.PNG"/>
 </p>
 
-Let it be noted that this schematic of the architecture is taken from the [original article](https://arxiv.org/abs/1506.02640) of the first version of YOLO. Continuous improvements on YOLO have led to a number of improvements and 
+Let it be noted that this schematic of the architecture is taken from the [original article](https://arxiv.org/abs/1506.02640) of the first version of YOLO. Number of improvements on the architecture have been made over the years, which we will briefly discuss after first delving into a slightly more detailed understanding of YOLOv1.
+
+
+
 
 [//]: # (WIP ZONE HERE: MODEL DESCRIPTION ABOVE, ANYTHING ELSE UNDERNEATH ######)
 
