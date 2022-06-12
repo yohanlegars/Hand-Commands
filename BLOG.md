@@ -105,3 +105,22 @@ Let it be noted that this schematic of the architecture is taken from the [origi
 
 [//]: # (WIP ZONE HERE: MODEL DESCRIPTION ABOVE, ANYTHING ELSE UNDERNEATH ######)
 
+### Training
+In order to speed up the training process it was decided to use the Google Cloud Patform (GCP). 
+The details of the VM instance used are shown below:
+
+|     GPU type      | Numbers of GPU |    Machine type    |Operating system|          Boot disk type            |
+|-------------------|----------------|--------------------|----------------|------------------------------------|
+| NVIDIA Tesla P100 |       1        | 8vCPU, 30 GB memory|Ubuntu 20.04 LTS|Balanced persistent disk (size 50GB)|
+
+
+
+
+
+
+
+
+
+
+
+
