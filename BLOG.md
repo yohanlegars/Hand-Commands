@@ -98,3 +98,5 @@ The architecture that takes care of converting an input image into a prediction 
 
 Let it be noted that this schematic of the architecture is taken from the [original article](https://arxiv.org/abs/1506.02640) of the first version of YOLO. Continuous improvements on YOLO have led to a number of improvements and 
 
+[//]: # (WIP ZONE HERE: MODEL DESCRIPTION ABOVE, ANYTHING ELSE UNDERNEATH ######)
+
