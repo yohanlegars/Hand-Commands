@@ -122,7 +122,15 @@ The details of the VM instance used are shown below:
 
 
 
+### Sparse YOLOv5 
 
+<p align="center">
+  <img width="100%" src="./blog_images/base.gif"/>
+</p>
+
+<p align="center">
+  <img width="100%" src="./blog_images/sparse.gif"/>
+</p>
 
 
 
