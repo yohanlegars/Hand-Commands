@@ -8,6 +8,10 @@ Matti Lang
 Yohan Le Gars
 
   In this blog post we discuss our approach of creating a sign language dataset from scratch, traning a deep learning model and implementing the lottery ticket hypothesis. The end-goal is to transfer the model on a RaspberryPi which will be connected to a small robot car. Therefore, it is important for the model to be lightweight and to reduce as many parameters as possible with the lottery ticket implementation in order to run the model for a real-time application. 
+
+<p align="middle">
+  <img src="blog_images/path.png"/>
+</p>
   
 ## The Signs
  
