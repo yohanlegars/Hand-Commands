@@ -138,7 +138,7 @@ The details of the VM instance used are shown below:
 |-------------------|----------------|--------------------|----------------|------------------------------------|
 | NVIDIA Tesla P100 |        1       | 8vCPU, 30 GB memory|Ubuntu 20.04 LTS|Balanced persistent disk (size 50GB)|
 
-We trained a Yolov5 small with a batch size of 42 and 200 epochs. The following hyperparameters were used:
+We trained a Yolov5 small with a batch size of 42 and 200 epochs. Below we show a list of all the hyperparameters. It is important to point out that we purposely set the image flip left-right (fliplr) to 0 so that the "left" and "right" signs are not confused during training. 
 
  - lr0: 0.01  # initial learning rate (SGD=1E-2, Adam=1E-3) 
  - lrf: 0.01  # final OneCycleLR learning rate (lr0 * lrf) 
