@@ -90,7 +90,7 @@ Each cell is taking care of making a pre-specified number *B* of bounding box pr
 The output of a prediction made by YOLO on an input image has a total of *SxSx(Bx5+C)* dimensions, where *S* is the number of cells along each dimension, *B* is the number of bounding box predictions per cell, and *C* is the number of classes. In the case that each cell is assigned 3 box predictions to make, and there are 5 distinct classes, each cell produces a prediction tensor of the format:
 
 <p align="middle">
-  <img src="blog_images/predict_tensor.gif"/>
+  <img src="blog_images/predict_tensor.gif" width="35" height="370"/>
 </p>
 
 
@@ -107,7 +107,7 @@ Let it be noted that this schematic of the architecture is taken from the [origi
 The first iteration over the initial design of YOLO is [YOLOv2](https://arxiv.org/abs/1612.08242v1). Its most notable improvements consist of the introduction [batch normalization](https://arxiv.org/abs/1502.03167), which acts as a regularizer, but most importantly, the choice of using anchor boxes for the bounding box regression task. Output tensors now each have conditional class probabilities estimations for every bounding box within each cell: continuing with the example shown just above for YOLO, YOLOv2 and every one that follow it will output tensors of the following format, for each cell (number of dimensions of the final output tensor is *SxSx(Bx(5+C))*):
 
 <p align="middle">
-  <img src="blog_images/predict_tensor_v2.gif"/>
+  <img src="blog_images/predict_tensor_v2.gif" width="35" height="400"/>
 </p>
 
 Note that the introduction of anchor boxes consists in the addition of prior knowledge about the type of images the architecture is expected to work with. Concretely, the authors perform k-means clustering of the ground truth bounding box dimensions in order to construct their anchor box dimensions (you can refer to [the article](https://arxiv.org/abs/1612.08242v1) for more details).
@@ -142,35 +142,36 @@ The details of the VM instance used are shown below:
 
 We trained a Yolov5 small with a batch size of 42 and 200 epochs. Below we show a list of all the hyperparameters. It is important to point out that we purposely set the image flip left-right (fliplr) to 0 so that the "left" and "right" signs are not confused during training. 
 
- - lr0: 0.01  # initial learning rate (SGD=1E-2, Adam=1E-3) 
- - lrf: 0.01  # final OneCycleLR learning rate (lr0 * lrf) 
- - momentum: 0.937  # SGD momentum/Adam beta1 
- - weight_decay: 0.0005  # optimizer weight decay 5e-4 
- - warmup_epochs: 3.0  # warmup epochs (fractions ok) 
- - warmup_momentum: 0.8  # warmup initial momentum 
- - warmup_bias_lr: 0.1  # warmup initial bias lr 
- - box: 0.05  # box loss gain 
- - cls: 0.5  # cls loss gain 
- - cls_pw: 1.0  # cls BCELoss positive_weight 
- - obj: 1.0  # obj loss gain (scale with pixels) 
- - obj_pw: 1.0  # obj BCELoss positive_weight 
- - iou_t: 0.20  # IoU training threshold 
- - anchor_t: 4.0  # anchor-multiple threshold 
- - fl_gamma: 0.0  # focal loss gamma (efficientDet default gamma=1.5) 
- - hsv_h: 0.015  # image HSV-Hue augmentation (fraction) 
- - hsv_s: 0.7  # image HSV-Saturation augmentation (fraction) 
- - hsv_v: 0.4  # image HSV-Value augmentation (fraction) 
- - degrees: 0.0  # image rotation (+/- deg) 
- - translate: 0.1  # image translation (+/- fraction) 
- - scale: 0.5  # image scale (+/- gain) 
- - shear: 0.0  # image shear (+/- deg) 
- - perspective: 0.0  # image perspective (+/- fraction), range 0-0.001 
- - flipud: 0.0  # image flip up-down (probability) 
- - fliplr: 0.0  # image flip left-right (probability) 
- - mosaic: 1.0  # image mosaic (probability) 
- - mixup: 0.0  # image mixup (probability) 
- - copy_paste: 0.0  # segment copy-paste (probability) 
-
+|    Hyperparameters    | Value|                Description                 |
+|-----------------------|------|--------------------------------------------|
+|         lr0           | 0.01 | initial learning rate (SGD=1E-2, Adam=1E-3)|
+|         lrf           | 0.01 | final OneCycleLR learning rate (lr0 * lrf) |
+|       momentum        | 0.937|         SGD momentum/Adam beta1            |
+|      weight_decay     |0.0005|        optimizer weight decay 5e-4         |
+|      warmup_epochs    | 3.0  |         warmup epochs (fractions ok)       |
+|     warmup_momentum   | 0.8  |           warmup initial momentum          |
+|     warmup_bias_lr    |0.1   |              warmup initial bias lr        |
+|         box           | 0.05 |                  box loss gain             |
+|         cls           | 0.5  |                   cls loss gain            |
+|         cls_pw        | 1.0  |              cls BCELoss positive_weight   |
+|         obj           | 1.0  |         obj loss gain (scale with pixels)  |
+|         obj_pw        | 1.0  |           obj BCELoss positive_weight      |
+|         iou_t         | 0.20 |            IoU training threshold          |
+|         anchor_t      | 4.0  |            anchor-multiple threshold       |
+|         fl_gamma      | 0.0  |focal loss gamma (efficientDet default gamma=1.5)|
+|         hsv_h         | 0.015|       image HSV-Hue augmentation (fraction)     |
+|         hsv_s         | 0.7  |     image HSV-Saturation augmentation (fraction)|
+|         hsv_v         | 0.4  |     image HSV-Value augmentation (fraction)     |
+|         degrees       | 0.0  |             image rotation (+/- deg)            |
+|         translate     | 0.1  |        image translation (+/- fraction)         |
+|         scale         |  0.5 |              image scale (+/- gain)             |
+|         shear         | 0.0  |              image shear (+/- deg)              |
+|         perspective   | 0.0  |  image perspective (+/- fraction), range 0-0.001|
+|         flipud        | 0.0  |          image flip up-down (probability)       |
+|         fliplr        | 0.0  |         image flip left-right (probability)     |
+|         mosaic        | 1.0  |              image mosaic (probability)         |
+|         mixup         | 0.0  |             image mixup (probability)           |
+|         copy_paste    | 0.0  |         segment copy-paste (probability)        |
 #### Results
 
 The total training time was 46 minutes on the instance. Below we can see the results of the classification and regression tasks. Comparing the training and validation sets we can see that both perform well for both tasks. We do note that in the regression task the training set performs better than the validation set. 
