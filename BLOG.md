@@ -157,6 +157,22 @@ We trained a Yolov5 small with a batch size of 42 and 200 epochs. The following 
 
 The total training time was 46 minutes on the instance. 
 
+<p align="middle">
+  <img src="blog_images/yolov5s-analysis/yolov5s-200-42-F1.png"/>
+</p>
+
+<p align="middle">
+  <img src="blog_images/yolov5s-analysis/yolov5s-200-42-matrix.png"/>
+</p>
+
+<p align="middle">
+  <img src="blog_images/yolov5s-analysis/yolov5s-200-42-precision.png"/>
+</p>
+
+<p align="middle">
+  <img src="blog_images/yolov5s-analysis/yolov5s-200-42-mosaique.png"/>
+</p>
+
 
 ### Sparse YOLOv5 
 
