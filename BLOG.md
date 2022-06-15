@@ -173,6 +173,7 @@ The total training time was 46 minutes on the instance.
   <img src="blog_images/yolov5s-analysis/yolov5s-200-42-mosaique.png"/>
 </p>
 
+[//]: # (WIP ZONE HERE: MODEL DESCRIPTION ABOVE, ANYTHING ELSE UNDERNEATH ######)
 
 ### Sparse YOLOv5 
 
