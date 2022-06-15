@@ -169,22 +169,17 @@ We trained a Yolov5 small with a batch size of 42 and 200 epochs. The following 
  - mixup: 0.0  # image mixup (probability) 
  - copy_paste: 0.0  # segment copy-paste (probability) 
 
-The total training time was 46 minutes on the instance. 
+The total training time was 46 minutes on the instance. Below we can see the results of the classification and regression tasks. Comparing the training and validation sets we can see that both perform well for both tasks. We do note that in the regression task the training set performs better than the validation set. 
 
 <p align="middle">
-  <img src="blog_images/yolov5s-analysis/yolov5s-200-42-F1.png"/>
+  <img src="blog_images/yolov5s-analysis/yolov5s-class-loss.png" width="500" height="350"/>
+  <img src="blog_images/yolov5s-analysis/yolov5s-val-train.png" width="500" height="350"/>
 </p>
 
-<p align="middle">
-  <img src="blog_images/yolov5s-analysis/yolov5s-200-42-matrix.png"/>
-</p>
+Below is a mosaique of images from the validation set with detection ansd prediction scores shown on the images. 
 
 <p align="middle">
-  <img src="blog_images/yolov5s-analysis/yolov5s-200-42-precision.png"/>
-</p>
-
-<p align="middle">
-  <img src="blog_images/yolov5s-analysis/yolov5s-200-42-mosaique.png"/>
+  <img src="blog_images/yolov5s-analysis/yolov5s-200-42-mosaique.png"  width="500" height="500"/>
 </p>
 
 [//]: # (WIP ZONE HERE: MODEL DESCRIPTION ABOVE, ANYTHING ELSE UNDERNEATH ######)
