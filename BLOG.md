@@ -122,7 +122,7 @@ The details of the VM instance used are shown below:
 
 |     GPU type      | Numbers of GPU |    Machine type    |Operating system|          Boot disk type            |
 |-------------------|----------------|--------------------|----------------|------------------------------------|
-| NVIDIA Tesla P100 |       1        | 8vCPU, 30 GB memory|Ubuntu 20.04 LTS|Balanced persistent disk (size 50GB)|
+| NVIDIA Tesla P100 |        1       | 8vCPU, 30 GB memory|Ubuntu 20.04 LTS|Balanced persistent disk (size 50GB)|
 
 
 
@@ -135,9 +135,6 @@ The details of the VM instance used are shown below:
 <p align="center">
   <img width="60%" src="./blog_images/sparse.gif"/>
 </p>
-
-
-
 
 
 
