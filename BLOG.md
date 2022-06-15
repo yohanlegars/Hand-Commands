@@ -188,7 +188,26 @@ Below is a mosaique of images from the validation set with detection ansd predic
 
 [//]: # (WIP ZONE HERE: MODEL DESCRIPTION ABOVE, ANYTHING ELSE UNDERNEATH ######)
 
-### Sparse YOLOv5 
+### Sparse YOLOv5
+Having a nicely working model running on GPU is all nice and dundy until you want to transfer your model 
+inside a micro-computer that only runs on CPU, namely the Rasberry 4. 
+But do not fret, we have the solution thanks to Neural Magic. By using the open-source tools by Neural Magic, we can supercharge 
+our YOLOv5 inferene performance on CPUs by sparsifying the model using SparseML quantization aware training.
+Sparsification is the process of removing redundant information from a model and outputting a new smaller and faster model.
+<p align="middle">
+   <a href="https://docs.neuralmagic.com/sparseml/">
+  <img src="blog_images/sparsification.png"/>
+</a>
+</p>
+We have used the 2 general methods to sparsify the model, being -Pruning and Quantization.
+Pruning removes redundant parameters or neurons that do not significantly contribute to the accuracy of the 
+results. As a result, it reduces the computational complexity. Here, we used static pruning where all pruning steps are  performed offline prior to 
+inference.
+Quantization reduces computations by reducing the precision of the datatype. The 32-bit floating point (FP32) weights, biases and activations are 
+being quantized to smaller width datatypes, typically to 8-bit integers (INT8).
+t must be noted that the quantization step overloads the GPU, to the extent of crashing the training process when the batch size is relatively large.
+To remedy this issue, we had to divide the training process into 2 training runs. In order to get the best of both worlds, the first run is 200 epochs with a batch size of 42 as explained above, while the second
+is a 100 epochs with pruning + quantization and a reduced batch size of 16 performed on the obtained pre-trained weights from the first run.
 
 <p align="center">
   <img width="60%" src="./blog_images/base.gif"/>
@@ -198,7 +217,7 @@ Below is a mosaique of images from the validation set with detection ansd predic
   <img width="60%" src="./blog_images/sparse.gif"/>
 </p>
 
-
+[//]: # (WIP ZONE HERE: MODEL DESCRIPTION ABOVE, ANYTHING ELSE UNDERNEATH ######)
 
 
 
