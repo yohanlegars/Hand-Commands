@@ -214,8 +214,8 @@ Below, we can see the difference in GPU consumption between 2 training runs wher
 </p>
 
 <p align="center">
-  <img width="60%" src="./blog_images/base.gif" width="300" height="300"/>
-  <img width="60%" src="./blog_images/sparse.gif" width="300" height="300"/>
+  <img src="./blog_images/base.gif" width="300" height="300"/>
+  <img src="./blog_images/sparse.gif" width="300" height="300"/>
 </p>
 
 
