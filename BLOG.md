@@ -210,16 +210,14 @@ To remedy this issue, we had to divide the training process into 2 training runs
 is a 100 epochs with pruning + quantization and a reduced batch size of 16 performed on the obtained pre-trained weights from the first run.
 Below, we can see the difference in GPU consumption between 2 training runs where one is performing quantization during the last 2 epochs while the other one isn't.
 <p align="center">
-  <img width="60%" src="./blog_images/yolov5s-analysis/gpu-memory-allocated.png"/>
+  <img width="60%" src="./blog_images/yolov5s-analysis/gpu-memory-allocated.png" width="700" height="550"/>
 </p>
 
 <p align="center">
-  <img width="60%" src="./blog_images/base.gif"/>
+  <img width="60%" src="./blog_images/base.gif" width="500" height="350"/>
+  <img width="60%" src="./blog_images/sparse.gif" width="500" height="350"/>
 </p>
 
-<p align="center">
-  <img width="60%" src="./blog_images/sparse.gif"/>
-</p>
 
 [//]: # (WIP ZONE HERE: MODEL DESCRIPTION ABOVE, ANYTHING ELSE UNDERNEATH ######)
 
