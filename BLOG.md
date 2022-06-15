@@ -138,6 +138,8 @@ The details of the VM instance used are shown below:
 |-------------------|----------------|--------------------|----------------|------------------------------------|
 | NVIDIA Tesla P100 |        1       | 8vCPU, 30 GB memory|Ubuntu 20.04 LTS|Balanced persistent disk (size 50GB)|
 
+#### Hyperparameters
+
 We trained a Yolov5 small with a batch size of 42 and 200 epochs. Below we show a list of all the hyperparameters. It is important to point out that we purposely set the image flip left-right (fliplr) to 0 so that the "left" and "right" signs are not confused during training. 
 
  - lr0: 0.01  # initial learning rate (SGD=1E-2, Adam=1E-3) 
@@ -168,6 +170,8 @@ We trained a Yolov5 small with a batch size of 42 and 200 epochs. Below we show 
  - mosaic: 1.0  # image mosaic (probability) 
  - mixup: 0.0  # image mixup (probability) 
  - copy_paste: 0.0  # segment copy-paste (probability) 
+
+#### Results
 
 The total training time was 46 minutes on the instance. Below we can see the results of the classification and regression tasks. Comparing the training and validation sets we can see that both perform well for both tasks. We do note that in the regression task the training set performs better than the validation set. 
 
