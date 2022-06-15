@@ -114,6 +114,20 @@ Note that the introduction of anchor boxes consists in the addition of prior kno
 
 [YOLOv3](https://arxiv.org/abs/1804.02767) compiles a number of minute improvements made by the original authors of YOLO. The classification task is now reformulated into a multilabel classification using Binary Cross Entropy instead of Cross Entropy. The difference is important when training on datasets with non mutually exclusive labels such as "woman" and "human" for example. Additionally, the model now performs multiscale predictions: ie, the boxes are predicted at 3 different scales, in a similar fashion than descirbed in [this article](https://arxiv.org/abs/1612.03144). Finally, they introduce a deeper, more performant network in order to perform the task. It consists of 53 convolutional layers (some of which with *3x3* kernels, others with *1x1*), and it makes use of shortcut connections. They call the architecture Darknet-53.
 
+After YOLOv3, the original creators of the YOLO architecture stopped working on it (or at least, they did not publish any update until this day). But it's not over yet. [Bochkovskiy et al](https://arxiv.org/abs/2004.10934v1) proposed YOLOv4, which encompasses their own set of improvements made on the original authors' work. In short, they investigate a plethora of new practices, split into two separate categories:
+- "Bag of Freebies": techniques that improve performance without adding any inference time.
+  - Mosaic Data Augmentation
+  - Self-adversarial-training
+  - CIoU loss
+- "Bag of Specials": techniques that slightly increase the model's inference time, but significantly improve prediction accuracy.
+  - Mish-activation
+  - Cross mini-Batch Normalization
+  - Dropblock regularization
+
+They then perform ablation studies on these new techniques, to determine their relevance. Bear in mind that some additional investigations are also conducted on the choice of the architecture itself. In the end, the authors develop a new version of YOLO, which performs better than the previous iteration, and that does not require impressive/inaccessible hardware for training. The work described in the original paper is extremely extensive, we cannot summarize it all here; feel free to [read it](https://arxiv.org/abs/2004.10934v1) for a detailed description of the conducted experiments.
+
+Finally, [YOLOv5](https://github.com/ultralytics/yolov5)'s most important contribution is a port made of the original YOLOv3 architecture, using the [PyTorch](https://pytorch.org/) library. The creators of the YOLOv5 repository aim at making the code open source, letting the deep learning community freely provide their own insights and improvements on YOLO. From this, a number of child-versions of YOLOv5 have emerged; those are all made available and described in the repository itself.
+
 [//]: # (WIP ZONE HERE: MODEL DESCRIPTION ABOVE, ANYTHING ELSE UNDERNEATH ######)
 
 ### Training
