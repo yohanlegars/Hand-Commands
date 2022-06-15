@@ -208,6 +208,10 @@ being quantized to smaller width datatypes, typically to 8-bit integers (INT8).
 t must be noted that the quantization step overloads the GPU, to the extent of crashing the training process when the batch size is relatively large.
 To remedy this issue, we had to divide the training process into 2 training runs. In order to get the best of both worlds, the first run is 200 epochs with a batch size of 42 as explained above, while the second
 is a 100 epochs with pruning + quantization and a reduced batch size of 16 performed on the obtained pre-trained weights from the first run.
+Below, we can see the difference in GPU consumption between 2 training runs where one is performing quantization during the last 2 epochs while the other one isn't.
+<p align="center">
+  <img width="60%" src="./blog_images/yolov5s-analysis/gpu-memory-allocated.png"/>
+</p>
 
 <p align="center">
   <img width="60%" src="./blog_images/base.gif"/>
