@@ -90,7 +90,7 @@ Each cell is taking care of making a pre-specified number *B* of bounding box pr
 The output of a prediction made by YOLO on an input image has a total of *SxSx(Bx5+C)* dimensions, where *S* is the number of cells along each dimension, *B* is the number of bounding box predictions per cell, and *C* is the number of classes. In the case that each cell is assigned 3 box predictions to make, and there are 5 distinct classes, each cell produces a prediction tensor of the format:
 
 <p align="middle">
-  <img src="blog_images/predict_tensor.gif" width="35" height="370"/>
+  <img src="blog_images/predict_tensor.gif"/>
 </p>
 
 
@@ -107,7 +107,7 @@ Let it be noted that this schematic of the architecture is taken from the [origi
 The first iteration over the initial design of YOLO is [YOLOv2](https://arxiv.org/abs/1612.08242v1). Its most notable improvements consist of the introduction [batch normalization](https://arxiv.org/abs/1502.03167), which acts as a regularizer, but most importantly, the choice of using anchor boxes for the bounding box regression task. Output tensors now each have conditional class probabilities estimations for every bounding box within each cell: as an example, with 2 bounding boxes assigned per cell, YOLOv2 and every one that follow it will output tensors of the following format, for each cell (number of dimensions of the final output tensor is *SxSx(Bx(5+C))*):
 
 <p align="middle">
-  <img src="blog_images/predict_tensor_v2.gif" width="35" height="400"/>
+  <img src="blog_images/predict_tensor_v2.gif"/>
 </p>
 
 Note that the introduction of anchor boxes consists in the addition of prior knowledge about the type of images the architecture is expected to work with. Concretely, the authors perform k-means clustering of the ground truth bounding box dimensions in order to construct their anchor box dimensions (you can refer to [the article](https://arxiv.org/abs/1612.08242v1) for more details).
