@@ -1,6 +1,4 @@
 
-[//]: # (WIP ZONE: MATTI ///////////////////////////////////////////////////////////////////)
-
 # Sign detections with lottery ticket hypothesis using PyTorch
 
 Paul Féry
@@ -26,9 +24,6 @@ The dataset consists of five different signs: "forward", "backward", "left" and 
 </p>
 
 
-
-[//]: # (WIP ZONE: PAUL ///////////////////////////////////////////////////////////////////)
-
 ## Image Creation process
 
 We wanted to automate the process of generating image samples for the dataset as much as possible. That way it would facilitate the addition of new samples if performance deemed it necessary. Additionally, if we wanted to add new signs (ie, additional class labels for the model to learn), creating that data would be simple and time-efficient.
@@ -44,12 +39,10 @@ With that in mind, we implemented a [simple script](https://github.com/yohanlega
 
 Sampling images is made quick and easy, while the script is running, visual feedback is provided to help the user in the process. They directly see what the camera sees, as well as what sign they must be performing a gesture for. If the mode is set to timed, a decreasing timer is also shown, indicating when the next sample will be taken.
 
-[//]: # (TODO: SHORT GIF OF THE PROCESS HERE)
-
 
 ## Annotation process
 
-Sampling images is not the only part of the dataset creation process. If we want to be able to perform nice predictions, we also want the labels corresponding to our sampled images. For our task, the labels are the sign type [REFER TO SIGN TYPE SECTION HERE], and the location of the sign in the image.
+Sampling images is not the only part of the dataset creation process. If we want to be able to perform nice predictions, we also want the labels corresponding to our sampled images. For our task, the labels are the sign type, and the location of the sign in the image.
 
 This is definitely the most time-consuming part of the dataset creation. Each image must be individually provided with its own label and coordinates for the sign. Nevertheless, it is possible to make the process efficient, to a reasonable extent. For this, we initially used the annotation program [labelImg](https://github.com/tzutalin/labelImg), which provides ample functionalities. However, building a dataset with multiple contributors requires an easy way to pool each team member's generated data and annotations in a common place. As a result, we ended up choosing an [online platform](https://roboflow.com/) to facilitate our work within the team. This is by no means required, and if you were to choose to work on your own on a custom dataset, we would recommend to use the labelImg program.
 
@@ -128,7 +121,6 @@ They then perform ablation studies on these new techniques, to determine their r
 
 Finally, [YOLOv5](https://github.com/ultralytics/yolov5)'s most important contribution is a port made of the original YOLOv3 architecture, using the [PyTorch](https://pytorch.org/) library. The creators of the YOLOv5 repository aim at making the code open source, letting the deep learning community freely provide their own insights and improvements on YOLO. From this, a number of child-versions of YOLOv5 have emerged; those are all made available and described in the repository itself.
 
-[//]: # (WIP ZONE HERE: MODEL DESCRIPTION ABOVE, ANYTHING ELSE UNDERNEATH ######)
 
 ### Training
 In order to speed up the training process it was decided to use the Google Cloud Patform (GCP). 
@@ -187,7 +179,6 @@ Below is a mosaique of images from the validation set with detection ansd predic
   <img src="blog_images/yolov5s-analysis/yolov5s-200-42-mosaique.png"  width="500" height="500"/>
 </p>
 
-[//]: # (WIP ZONE HERE: MODEL DESCRIPTION ABOVE, ANYTHING ELSE UNDERNEATH ######)
 
 ### Sparse YOLOv5
 Having a nicely working model running on GPU is all nice and dundy until you want to transfer your model 
@@ -219,8 +210,6 @@ Below, we can see the difference in GPU consumption between 2 training runs wher
   <img src="./blog_images/sparse.gif" width="300" height="300"/>
 </p>
 
-
-[//]: # (WIP ZONE HERE: MODEL DESCRIPTION ABOVE, ANYTHING ELSE UNDERNEATH ######)
 
 
 ### Future work
