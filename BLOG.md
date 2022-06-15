@@ -7,7 +7,7 @@ Paul Féry
 Matti Lang
 Yohan Le Gars
 
-  In this blog post we discuss our approach of creating a sign language dataset from scratch, traning a deep learning model and implementing the lottery ticket hypothesis. The end-goal is to transfer the model on a RaspberryPi which will be connected to a small robot car. Therefore, it is important for the model to be lightweight and to reduce as many parameters as possible with the lottery ticket implementation in order to run the model for a real-time application. 
+  In this blog post we discuss our approach of creating a sign language dataset from scratch, traning a deep learning model and implementing the lottery ticket hypothesis. The end-goal is to transfer the model on a RaspberryPi which will be connected to a small robot car. Therefore, it is important for the model to be lightweight and to reduce as many parameters as possible with the lottery ticket implementation in order to run the model for a real-time application. Below is a summary showing the workflow of the pipeline we implemented. 
 
 <p align="middle">
   <img src="blog_images/path.png"/>
@@ -220,4 +220,14 @@ is a 100 epochs with pruning + quantization and a reduced batch size of 16 perfo
 [//]: # (WIP ZONE HERE: MODEL DESCRIPTION ABOVE, ANYTHING ELSE UNDERNEATH ######)
 
 
+### Future work
+
+#### Yolov5-small vs Yolov5-nano
+
+In addition to Yolov5-small we also trained Yolov5-nano with the same hyperparameters (200 epochs, batch size 42) for a comparison. From the figures below we see that Yolov5-nano achieves an almost identical performance to Yolov5-small while reducing training time and allocating much less GPU memory. Therefore, when transferring the model on the RaspberryPi we would use a Yolov5-nano instead of a Yolov5-small and implement the pruning and quantization on this model in order to make it as light weight as possible. 
+
+<p align="middle">
+  <img src="blog_images/yolov5s-analysis/GPU-small-nano.png" width="500" height="350"/>
+  <img src="blog_images/yolov5s-analysis/loss-nano-small.png" width="500" height="350"/>
+</p>
 
