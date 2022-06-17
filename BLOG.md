@@ -209,17 +209,25 @@ being quantized to smaller width datatypes, typically to 8-bit integers (INT8).
 t must be noted that the quantization step overloads the GPU, to the extent of crashing the training process when the batch size is relatively large.
 To remedy this issue, we had to divide the training process into 2 training runs. In order to get the best of both worlds, the first run is 200 epochs with a batch size of 42 as explained above, while the second
 is a 100 epochs with pruning + quantization and a reduced batch size of 16 performed on the obtained pre-trained weights from the first run.
-Below, we can see the difference in GPU consumption between 2 training runs where one is performing quantization during the last 2 epochs while the other one isn't.
+Below, we can see the difference in GPU consumption  between 2 training runs with a batch size of 16 where one is performing quantization during the last 2 epochs while the other one isn't.
 <p align="center">
-  <img width="60%" src="./blog_images/yolov5s-analysis/gpu-memory-allocated.png" width="700" height="550"/>
+  <img width="50%" src="./blog_images/yolov5s-analysis/gpu-memory-allocated.png" width="700" height="550"/>
 </p>
+Since we had to divide the training into 2 different runs in order to change the batch size, the same procedure was applied on a base yolov5 training process without any pruning and quantization 
+steps. Hence, a 200 epochs run was first performed with a batch size of 42, followed by 100 epochs with 16 batch size.
+As a result, the effect of pruning and quantization can be compared with its yolov5 small vanilla counterpart.
 
 <p align="center">
   <img src="./blog_images/base.gif" width="300" height="300"/>
   <img src="./blog_images/sparse.gif" width="300" height="300"/>
 </p>
+We can see that the sparse model is faster than the vanilla one.
+Furthermore, Pruning and quantization considerably reduce the size of the model while keeping the accuracy intact.
+<p align="center">
+ <img src="./blog_images/yolov5s-analysis/map.png" width="500" height="300"/>
+ <img src="./blog_images/yolov5s-analysis/size.png" width="500" height="200"/>
 
-
+</p>
 [//]: # (WIP ZONE HERE: MODEL DESCRIPTION ABOVE, ANYTHING ELSE UNDERNEATH ######)
 
 
