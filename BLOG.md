@@ -237,7 +237,6 @@ Furthermore, Pruning and quantization considerably reduce the size of the model 
  <img src="./blog_images/yolov5s-analysis/size.png" width="500" height="200"/>
 
 </p>
-[//]: # (WIP ZONE HERE: MODEL DESCRIPTION ABOVE, ANYTHING ELSE UNDERNEATH ######)
 
 
 ## <a name="section_future"></a>Future work
