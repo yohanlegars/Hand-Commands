@@ -38,7 +38,6 @@ python data_mover.py
 ````
 
 
-
-
+## [REFER TO THE BLOG](BLOG.md)
 
 
