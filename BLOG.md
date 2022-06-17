@@ -5,13 +5,29 @@ Paul Féry
 Matti Lang
 Yohan Le Gars
 
+<details open="open">
+<summary>Table of Contents</summary>
+
+- [Introduction](#section_intro)
+- [The Signs](#section_signs)
+- [Image Creation Process](#section_images)
+- [Annotation Process](#section_annot)
+- [The Model](#section_model)
+- [Training](#section_training)
+- [Results](#section_results)
+- [Sparse YOLOv5](#section_sparse_yolo5)
+- [Future work](#section_future)
+</details>
+
+## <a name="section_intro"></a>Introduction
+
   In this blog post we discuss our approach of creating a sign language dataset from scratch, traning a deep learning model and implementing the lottery ticket hypothesis. The end-goal is to transfer the model on a RaspberryPi which will be connected to a small robot car. Therefore, it is important for the model to be lightweight and to reduce as many parameters as possible with the lottery ticket implementation in order to run the model for a real-time application. Below is a summary showing the workflow of the pipeline we implemented. 
 
 <p align="middle">
   <img src="blog_images/path.png"/>
 </p>
   
-## The Signs
+## <a name="section_signs"></a>The Signs
  
 The dataset consists of five different signs: "forward", "backward", "left" and "right","stop". The images can be seen below:
 
@@ -24,7 +40,7 @@ The dataset consists of five different signs: "forward", "backward", "left" and 
 </p>
 
 
-## Image Creation process
+## <a name="section_images"></a>Image Creation process
 
 We wanted to automate the process of generating image samples for the dataset as much as possible. That way it would facilitate the addition of new samples if performance deemed it necessary. Additionally, if we wanted to add new signs (ie, additional class labels for the model to learn), creating that data would be simple and time-efficient.
 
@@ -40,7 +56,7 @@ With that in mind, we implemented a [simple script](https://github.com/yohanlega
 Sampling images is made quick and easy, while the script is running, visual feedback is provided to help the user in the process. They directly see what the camera sees, as well as what sign they must be performing a gesture for. If the mode is set to timed, a decreasing timer is also shown, indicating when the next sample will be taken.
 
 
-## Annotation process
+## <a name="section_annot"></a>Annotation process
 
 Sampling images is not the only part of the dataset creation process. If we want to be able to perform nice predictions, we also want the labels corresponding to our sampled images. For our task, the labels are the sign type, and the location of the sign in the image.
 
@@ -65,7 +81,7 @@ For our project, the hand sign / class label correspondences are as follows:
 For the bounding box, each of the dimensions are normalized with respect to the input image resolution.
 
 
-## The Model
+## <a name="section_model"></a>The Model
 
 Our initial attempt at an architecture was a reproduction from scratch of the [YOLOv3 model](https://pjreddie.com/media/files/papers/YOLOv3.pdf). This process did unfortunately not fare the way we initially hoped to follow. Complications in implementing the architecture from scratch made it difficult to obtain a working, self-made version of the model. Those manifested themselves mostly in lack of coordination in the creation of the several components of the process: building everything from scratch requires precise coordination between how the architecture is built, how its training loop is built, and how the dataset extraction process is conducted. We arrived at a stage where a training loop and dataset classes were fully implemented and ready, using Pytorch. However, the dataset class does not prepare label tensors in the format that is accepted by YOLO. Although fixing this issue was no concern in terms of our capabilities, heavy time constraints related to the schedule imposed for the project led us to abandon this route, and work using a [YOLOv5 model provided by ultralytics](https://github.com/ultralytics/yolov5). With the benefit of hindsight, a lot could have been done differently with respect to this design process, which would have permitted the success of creation of our own version of a YOLO architecture.
 
@@ -105,7 +121,7 @@ The first iteration over the initial design of YOLO is [YOLOv2](https://arxiv.or
 
 Note that the introduction of anchor boxes consists in the addition of prior knowledge about the type of images the architecture is expected to work with. Concretely, the authors perform k-means clustering of the ground truth bounding box dimensions in order to construct their anchor box dimensions (you can refer to [the article](https://arxiv.org/abs/1612.08242v1) for more details).
 
-[YOLOv3](https://arxiv.org/abs/1804.02767) compiles a number of minute improvements made by the original authors of YOLO. The classification task is now reformulated into a multilabel classification using Binary Cross Entropy instead of Cross Entropy. The difference is important when training on datasets with non mutually exclusive labels such as "woman" and "human" for example. Additionally, the model now performs multiscale predictions: ie, the boxes are predicted at 3 different scales, in a similar fashion than descirbed in [this article](https://arxiv.org/abs/1612.03144). Finally, they introduce a deeper, more performant network in order to perform the task. It consists of 53 convolutional layers (some of which with *3x3* kernels, others with *1x1*), and it makes use of shortcut connections. They call the architecture Darknet-53.
+[YOLOv3](https://arxiv.org/abs/1804.02767) compiles a number of minute improvements made by the original authors of YOLO. The classification task is now reformulated into a multilabel classification using Binary Cross Entropy instead of Cross Entropy. The difference is important when training on datasets with non mutually exclusive labels such as "woman" and "human" for example. Additionally, the model now performs multiscale predictions: ie, the boxes are predicted at 3 different scales, in a similar fashion than described in [this article](https://arxiv.org/abs/1612.03144). Finally, they introduce a deeper, more performant network in order to perform the task. It consists of 53 convolutional layers (some of which with *3x3* kernels, others with *1x1*), and it makes use of shortcut connections. They call the architecture Darknet-53.
 
 After YOLOv3, the original creators of the YOLO architecture stopped working on it (or at least, they did not publish any update until this day). But it's not over yet. [Bochkovskiy et al](https://arxiv.org/abs/2004.10934v1) proposed YOLOv4, which encompasses their own set of improvements made on the original authors' work. In short, they investigate a plethora of new practices, split into two separate categories:
 - "Bag of Freebies": techniques that improve performance without adding any inference time.
@@ -122,7 +138,7 @@ They then perform ablation studies on these new techniques, to determine their r
 Finally, [YOLOv5](https://github.com/ultralytics/yolov5)'s most important contribution is a port made of the original YOLOv3 architecture, using the [PyTorch](https://pytorch.org/) library. The creators of the YOLOv5 repository aim at making the code open source, letting the deep learning community freely provide their own insights and improvements on YOLO. From this, a number of child-versions of YOLOv5 have emerged; those are all made available and described in the repository itself.
 
 
-### Training
+## <a name="section_training"></a>Training
 In order to speed up the training process it was decided to use the Google Cloud Patform (GCP). 
 The details of the VM instance used are shown below:
 
@@ -130,7 +146,7 @@ The details of the VM instance used are shown below:
 |-------------------|----------------|--------------------|----------------|------------------------------------|
 | NVIDIA Tesla P100 |        1       | 8vCPU, 30 GB memory|Ubuntu 20.04 LTS|Balanced persistent disk (size 50GB)|
 
-#### Hyperparameters
+### Hyperparameters
 
 We trained a Yolov5 small with a batch size of 42 and 200 epochs. Below we show a list of all the hyperparameters. It is important to point out that we purposely set the image flip left-right (fliplr) to 0 so that the "left" and "right" signs are not confused during training. 
 
@@ -164,7 +180,7 @@ We trained a Yolov5 small with a batch size of 42 and 200 epochs. Below we show 
 |         mosaic        | 1.0  |              image mosaic (probability)         |
 |         mixup         | 0.0  |             image mixup (probability)           |
 |         copy_paste    | 0.0  |         segment copy-paste (probability)        |
-#### Results
+## <a name="section_results"></a>Results
 
 The total training time was 46 minutes on the instance. Below we can see the results of the classification and regression tasks. Comparing the training and validation sets we can see that both perform well for both tasks. We do note that in the regression task the training set performs better than the validation set. 
 
@@ -180,7 +196,7 @@ Below is a mosaique of images from the validation set with detection ansd predic
 </p>
 
 
-### Sparse YOLOv5
+## <a name="section_sparse_yolo5"></a>Sparse YOLOv5
 Having a nicely working model running on GPU is all nice and dundy until you want to transfer your model 
 inside a micro-computer that only runs on CPU, namely the Rasberry 4. 
 But do not fret, we have the solution thanks to Neural Magic. By using the open-source tools by Neural Magic, we can supercharge 
@@ -224,9 +240,9 @@ Furthermore, Pruning and quantization considerably reduce the size of the model 
 [//]: # (WIP ZONE HERE: MODEL DESCRIPTION ABOVE, ANYTHING ELSE UNDERNEATH ######)
 
 
-### Future work
+## <a name="section_future"></a>Future work
 
-#### Yolov5-small vs Yolov5-nano
+### Yolov5-small vs Yolov5-nano
 
 In addition to Yolov5-small we also trained Yolov5-nano with the same hyperparameters (200 epochs, batch size 42) for a comparison. From the figures below we see that Yolov5-nano achieves an almost identical performance to Yolov5-small while reducing training time and allocating much less GPU memory. Therefore, when transferring the model on the RaspberryPi we would use a Yolov5-nano instead of a Yolov5-small and implement the pruning and quantization on this model in order to make it as light weight as possible. 
 
