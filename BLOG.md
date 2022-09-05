@@ -1,4 +1,4 @@
-
+## Disclaimer: work is still in working progress
 # Sign detections with lottery ticket hypothesis using PyTorch
 
 Paul Féry
